@@ -4,22 +4,12 @@
 #include "ov2640.h" 
 
 
-u8 ov_frame=0;  						//帧率
+
 
 
 DCMI_InitTypeDef DCMI_InitStructure;
 
-//DCMI中断服务函数
-void DCMI_IRQHandler(void)
-{
-	if(DCMI_GetITStatus(DCMI_IT_FRAME)==SET)//捕获到一帧图像
-	{
-		//jpeg_data_process(); 	//jpeg数据处理	
-		DCMI_ClearITPendingBit(DCMI_IT_FRAME);//清除帧中断
-		//LED1=!LED1;
-		//ov_frame++;  
-	}
-} 
+
 //DCMI DMA配置
 //memaddr:存储器地址    将要存储摄像头数据的内存地址(也可以是外设地址)
 //DMA_BufferSize:存储器长度    0~65535

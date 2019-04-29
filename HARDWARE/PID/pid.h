@@ -32,6 +32,8 @@ typedef struct
 	int ball_min_Y;
 	int ball_center_X;
 	int ball_center_Y;
+	int ball_last_center_X;
+	int ball_last_center_Y;
 
 }pid_t;
 

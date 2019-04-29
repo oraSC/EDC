@@ -29,7 +29,9 @@ void pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
 	Pid->ball_max_Y = 0;
 	Pid->ball_center_X = 80;
 	Pid->ball_center_Y = 100;
-
+	Pid->ball_last_center_X = -1;
+	Pid->ball_last_center_Y = -1;
+	
 
 }
 

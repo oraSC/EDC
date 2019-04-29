@@ -14,13 +14,15 @@
 #define Width_End		150
 #define Height_Start	10
 #define Height_End		190
+#define ENABLE_I		1
+#define DISABLE_I		0
 
 
 //displayMode模式选择
 #define RGB				1
 #define BinaryZation	-1
-
-
+#define NEW_frame		1
+#define OLD_frame		0
 
 //初始值
 int displayMode;
@@ -43,7 +45,11 @@ float Aim_X = 80;
 float Aim_Y = 100;
 int PWM_X = 0;
 int PWM_Y = 0;
+u8 ov_frame_flag;  						//帧率
+u32 ball_static = 0;
+char Enable_I_flag = 0;
 
+void pid_calculate(void);
 
 int main(void)
 {
@@ -51,7 +57,7 @@ int main(void)
 	
 	u16 i,j;
 	displayMode = BinaryZation;
-
+	ov_frame_flag = OLD_frame;
 	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	delay_init(168);      //初始化延时函数
@@ -96,13 +102,16 @@ int main(void)
 		
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 3, 0.001, 40); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 3, 0.001, 40);
-	TIM3_init(30); //30HZ -> 33ms 摄像头差不多30帧
+	pid_init(&pid_X, 10, 0.1, 50); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 10, 0.1, 50);
+	//TIM3_init(30); //30HZ -> 33ms 摄像头差不多30帧
 	
 	//while(1);
 	while(1)
 	{
+		//等待新的一帧
+		while(ov_frame_flag == OLD_frame);
+		ov_frame_flag = OLD_frame;
 		hang=0;
 		LCD_SetCursor(0,0);  
 		LCD_WriteRAM_Prepare();		//开始写入GRAM
@@ -159,14 +168,43 @@ int main(void)
 			}
 			
 		}
-			  pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
-			  pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
+			pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
+			pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
+			
+			//判断位置是否不动
+			if(pid_X.ball_last_center_X <= pid_X.ball_center_X + 1 && pid_X.ball_last_center_X >= pid_X.ball_center_X - 1  \
+				&& pid_Y.ball_last_center_Y <= pid_Y.ball_center_Y + 1 && pid_Y.ball_last_center_Y >= pid_Y.ball_center_Y - 1)
+			{
+				if(pid_X.ball_last_center_X <= Aim_X + 3 && pid_X.ball_last_center_X >= Aim_X - 3 \
+					&& pid_Y.ball_last_center_Y <= Aim_Y + 3 && pid_Y.ball_last_center_Y >= Aim_Y - 3)
+				{
+					//fuck Nothing to do
+				}
+				else 
+				{
+					ball_static++;
+					if(ball_static > 40)
+					{
+						Enable_I_flag = ENABLE_I;
+					}
+				}
+			}
+			else 
+			{
+				ball_static = 0;
+				pid_X.ball_last_center_X = pid_X.ball_center_X;
+				pid_Y.ball_last_center_Y = pid_Y.ball_center_Y;
+			}
+		
+			pid_X.ball_max_X = 0;
+			pid_X.ball_min_X = 160;
+			pid_Y.ball_max_Y = 0;
+			pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
 					
-			  pid_X.ball_max_X = 0;
-			  pid_X.ball_min_X = 160;
-			  pid_Y.ball_max_Y = 0;
-			  pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
-					
+			
+		
+			//pid计算
+			pid_calculate();
 
 				
 		//		TIM_SetCompare1(TIM14,9340);	//修改比较值，修改占空比   调试舵机使用
@@ -177,9 +215,13 @@ int main(void)
 }
 
 
-void TIM3_IRQHandler()
-{
 
+
+
+
+void pid_calculate(void)
+{
+	static u8 I_count = 0;
 	char str1[30] = {0};
 	char str2[30] = {0};
 	char str3[30] = {0};
@@ -187,7 +229,7 @@ void TIM3_IRQHandler()
 	//char str5[30] = {0};
 	
 	
-	if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
+	//if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
 	{
 		if(displayMode == BinaryZation)
 		{
@@ -195,20 +237,43 @@ void TIM3_IRQHandler()
 			pid_X.E_now = Aim_X - pid_X.ball_center_X;
 			pid_Y.E_now = Aim_Y - pid_Y.ball_center_Y;
 			
-			PWM_X = PWM_init_X                                + \
-			        pid_X.Kp * pid_X.E_now                    + \
-			        pid_X.Ki * pid_X.E_sum                    + \
-			        pid_X.Kd * (pid_X.E_now - pid_X.E_last);
-			PWM_Y = PWM_init_Y                                + \
-			        pid_Y.Kp * pid_Y.E_now                    + \
-			        pid_Y.Ki * pid_Y.E_sum                    + \
-			        pid_Y.Kd * (pid_Y.E_now - pid_Y.E_last);
+			//计算各项作用
+			pid_X.Pout = pid_X.Kp * pid_X.E_now;
+			pid_Y.Pout = pid_Y.Kp * pid_Y.E_now;
+			
+			if(Enable_I_flag == ENABLE_I)
+			{
+				I_count++;
+				if(I_count >= 40)
+				{
+					I_count = 0;
+					Enable_I_flag = DISABLE_I;
+					pid_X.E_sum = pid_Y.E_sum = 0;
+					
+				}
+				pid_X.E_sum += pid_X.E_now;  //KI
+				pid_Y.E_sum += pid_Y.E_now;
+				pid_X.Iout = pid_X.Ki * pid_X.E_sum ;
+				pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;
+			}
+			else 
+			{
+				pid_X.Iout = 0;
+				pid_Y.Iout = 0;
+			}
+			
+			
+			pid_X.Dout = pid_X.Kd * (pid_X.E_now - pid_X.E_last);
+			pid_Y.Dout = pid_Y.Kd * (pid_Y.E_now - pid_Y.E_last);
+			
+			PWM_X = PWM_init_X + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
+			PWM_Y = PWM_init_Y + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+			        
 			
 			pid_X.E_last = pid_X.E_now;  //KD
 			pid_Y.E_last = pid_Y.E_now;
 			
-			pid_X.E_sum += pid_X.E_now;  //KI
-			pid_Y.E_sum += pid_Y.E_now;
+			
 			
 			if(PWM_Y > 2500)	PWM_Y = 2500;                                    //pid输出限幅度 防止抽风
 			if(PWM_Y < 500)		PWM_Y = 500;
@@ -227,7 +292,7 @@ void TIM3_IRQHandler()
 		
 		
 		
-		sprintf(str3, "b_X: %d       Ki: %.2f", pid_X.ball_center_X, pid_X.Ki);
+		sprintf(str3, "b_X: %d Ki: %.2f %d", pid_X.ball_center_X, pid_X.Ki, Enable_I_flag);
 		sprintf(str4, "b_Y: %d", pid_Y.ball_center_Y);
 		sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X, pid_X.Kp);
 		sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y, pid_X.Kd);
@@ -248,9 +313,28 @@ void TIM3_IRQHandler()
 //		LCD_ShowString(30, 290 , 240, 16, 16, str5);
 		
 	}
-	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+	//TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
 }
+
+
+
+//DCMI中断服务函数
+void DCMI_IRQHandler(void)
+{
+	if(DCMI_GetITStatus(DCMI_IT_FRAME)==SET)//捕获到一帧图像
+	{
+		
+		DCMI_ClearITPendingBit(DCMI_IT_FRAME);//清除帧中断
+		
+		ov_frame_flag = NEW_frame;
+		//printf("%d  \n", ov_frame_flag);
+		
+	}
+} 
+
+
+
 
 
  
