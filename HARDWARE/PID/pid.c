@@ -35,7 +35,7 @@ void pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
 
 }
 
-#define T3_PRESCALER	84
+#define T3_PRESCALER	8400
 #define T3_CLK			84000000
 
 void TIM3_init(int Fre)

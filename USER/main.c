@@ -8,8 +8,23 @@
 #include "ov2640.h"	
 #include "pid.h"
 
-#define WINDOW_WIDTH 	160
-#define WINDOW_HEIGHT	200
+#define AIM_1_index		1
+#define AIM_2_index		2
+#define AIM_3_index		3
+#define AIM_4_index		4
+#define AIM_5_index		5
+#define AIM_6_index		6
+#define AIM_7_index		7
+#define AIM_8_index		8
+#define AIM_9_index		9
+#define buffer_1_index	10
+#define buffer_2_index	11
+#define buffer_3_index	12
+#define buffer_4_index	13
+
+
+#define WINDOW_WIDTH 	148
+#define WINDOW_HEIGHT	196
 #define Width_Start		10
 #define Width_End		150
 #define Height_Start	10
@@ -30,7 +45,40 @@ u16 rgb_buf[WINDOW_HEIGHT][WINDOW_WIDTH];
 u16 gray;
 u16 hang=0;
 
+//点：(X, Y)
+typedef struct point{
+	
+	int X;
+	int Y;
 
+}point_t;
+
+//直线：Y = kX + b
+typedef struct line{
+
+	float k;
+	float b;
+
+}line_t;
+//矩形
+typedef struct rect{
+	
+	line_t left;
+	line_t top;
+	line_t right;
+	line_t bottom;
+	point_t center;
+
+}rect_t;
+
+
+
+point_t Aim[10];
+
+	
+int success = 0;
+int aim_routine[9] = {AIM_5_index};     //对应编号 - 1
+int *aim_index = aim_routine;
 
 
 //===================PID变量==============//
@@ -41,8 +89,8 @@ int PWM_init_X = 1100;
 int PWM_init_Y = 1100;
 
 //目标点
-float Aim_X = 80;
-float Aim_Y = 100;
+float Aim_X = 70;
+float Aim_Y = 70;
 int PWM_X = 0;
 int PWM_Y = 0;
 u8 ov_frame_flag;  						//帧率
@@ -50,14 +98,53 @@ u32 ball_static = 0;
 char Enable_I_flag = 0;
 
 void pid_calculate(void);
+rect_t fix_position();
+line_t find_line(point_t start, point_t end);
+
+int ov_frame = 0;
+rect_t rect;
+
 
 int main(void)
 {
 
 	
 	u16 i,j;
+	
+	//Aim
+	Aim[AIM_1_index].X = 19;
+	Aim[AIM_1_index].Y = 30;
+	Aim[AIM_2_index].X = 71;
+	Aim[AIM_2_index].Y = 29;
+	Aim[AIM_3_index].X = 121;
+	Aim[AIM_3_index].Y = 29;
+	Aim[AIM_4_index].X = 21;
+	Aim[AIM_4_index].Y = 96;
+	Aim[AIM_5_index].X = 71;
+	Aim[AIM_5_index].Y = 95;
+	Aim[AIM_6_index].X = 122;
+	Aim[AIM_6_index].Y = 95;
+	Aim[AIM_7_index].X = 22;
+	Aim[AIM_7_index].Y = 161;
+	Aim[AIM_8_index].X = 71;
+	Aim[AIM_8_index].Y = 161;
+	Aim[AIM_9_index].X = 122;
+	Aim[AIM_9_index].Y = 160;
+	
+	//buffer
+	Aim[buffer_1_index].X = 45;
+	Aim[buffer_1_index].Y = 63;
+	Aim[buffer_2_index].X = 96;
+	Aim[buffer_2_index].Y = 62;
+	Aim[buffer_3_index].X = 46;
+	Aim[buffer_3_index].Y = 128;
+	Aim[buffer_4_index].X = 96;
+	Aim[buffer_4_index].Y = 128;
+
+	
 	displayMode = BinaryZation;
 	ov_frame_flag = OLD_frame;
+	
 	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	delay_init(168);      //初始化延时函数
@@ -102,9 +189,14 @@ int main(void)
 		
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 10, 0.1, 50); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 10, 0.1, 50);
-	//TIM3_init(30); //30HZ -> 33ms 摄像头差不多30帧
+	pid_init(&pid_X, 10, 0.4, 180); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 10, 0.4, 180);
+	TIM3_init(1); //30HZ -> 33ms 摄像头差不多30帧
+	
+	//自校正位置
+	while(ov_frame_flag == OLD_frame);
+	rect = fix_position();
+	
 	
 	//while(1);
 	while(1)
@@ -132,13 +224,36 @@ int main(void)
 				if(displayMode == BinaryZation)
 				{
 					//裁剪
-					if(i < Height_Start | i > Height_End | j < Width_Start || j > Width_End)
-					{
-						LCD->LCD_RAM=WHITE;
-						continue;
-					}
+//					
+//						if((rect.top.k * j + rect.top.b) > i)
+//						{
+//							LCD->LCD_RAM=WHITE;
+//							continue;
+//						}
+//						else if((rect.bottom.k * j + rect.bottom.b) < i)
+//						{
+//							LCD->LCD_RAM=WHITE;
+//							continue;
+//							
+//						}
+//						else if( ((i - rect.left.b) / rect.left.k) > j)
+//						{
+//							LCD->LCD_RAM=WHITE;
+//							continue;
+//							
+//						}
+//						else if( ((i - rect.right.b) / rect.right.k) < j)
+//						{
+//							LCD->LCD_RAM=WHITE;
+//							continue;
+//							
+//						}
+						
+					
 					gray=((rgb_buf[i][j]>>11)*19595+((rgb_buf[i][j]>>5)&0x3f)*38469 +(rgb_buf[i][j]&0x1f)*7472)>>16;  //灰度计算。公式请百度
-					if(gray>=23)  //固定阈值二值化
+					if(gray>=22)  //固定阈值二值化
+					//if(gray >= 8)
+					
 					{			  
 							//if(i>8&&i<136&&j<200&&j>16)  //此处遍历图像寻找小球最上最下 最左 最右四个点坐标
 							{
@@ -170,18 +285,58 @@ int main(void)
 		}
 			pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
 			pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
-			
+//			
+//			//判断是否进入缓存区
+//			if(*aim_index == buffer_1_index || *aim_index == buffer_2_index || *aim_index == buffer_3_index || *aim_index == buffer_4_index)
+//			{
+//				if(pid_X.ball_center_X <= Aim[*aim_index].X + 10 && pid_X.ball_center_X >= Aim[*aim_index].X - 10 \
+//					&& pid_Y.ball_center_Y <= Aim[*aim_index].Y + 10 && pid_Y.ball_center_Y >= Aim[*aim_index].Y - 10)
+//				{
+//					success++;
+//					if(success >= 60)
+//					{
+//						aim_index++;
+//						success = 0;
+//					}
+//				
+//				}
+//				else 
+//				{
+//					ball_static = 0;
+//					success = 0;
+//					pid_X.ball_last_center_X = pid_X.ball_center_X;
+//					pid_Y.ball_last_center_Y = pid_Y.ball_center_Y;
+//				}
+//				
+//			
+//			
+//			
+//			}
+		
+		
+		
 			//判断位置是否不动
 			if(pid_X.ball_last_center_X <= pid_X.ball_center_X + 1 && pid_X.ball_last_center_X >= pid_X.ball_center_X - 1  \
 				&& pid_Y.ball_last_center_Y <= pid_Y.ball_center_Y + 1 && pid_Y.ball_last_center_Y >= pid_Y.ball_center_Y - 1)
 			{
-				if(pid_X.ball_last_center_X <= Aim_X + 3 && pid_X.ball_last_center_X >= Aim_X - 3 \
-					&& pid_Y.ball_last_center_Y <= Aim_Y + 3 && pid_Y.ball_last_center_Y >= Aim_Y - 3)
+				if(pid_X.ball_center_X <= Aim[*aim_index].X + 3 && pid_X.ball_center_X >= Aim[*aim_index].X - 3 \
+					&& pid_Y.ball_center_Y <= Aim[*aim_index].Y + 3 && pid_Y.ball_center_Y >= Aim[*aim_index].Y - 3)
 				{
-					//fuck Nothing to do
+					//success
+					success++;
+					if(success >= 60)
+					{
+						aim_index++;
+						success = 0;
+						
+					}
+					
+					
+					
 				}
 				else 
 				{
+					success = 0;
 					ball_static++;
 					if(ball_static > 40)
 					{
@@ -192,6 +347,7 @@ int main(void)
 			else 
 			{
 				ball_static = 0;
+				success = 0;
 				pid_X.ball_last_center_X = pid_X.ball_center_X;
 				pid_Y.ball_last_center_Y = pid_Y.ball_center_Y;
 			}
@@ -205,7 +361,7 @@ int main(void)
 		
 			//pid计算
 			pid_calculate();
-
+			ov_frame++;
 				
 		//		TIM_SetCompare1(TIM14,9340);	//修改比较值，修改占空比   调试舵机使用
 		
@@ -216,6 +372,149 @@ int main(void)
 
 
 
+#define POINT_SIZE 20
+
+rect_t fix_position()
+{
+	int cols = 0;
+	int rows = 0;
+	int counter = 1;
+	
+	
+	
+	point_t first, second, third, fourth;
+	point_t left_top, left_bottom, right_top, right_bottom;
+	rect_t myrect;
+	
+	//遍历四个顶角	
+	for(rows = 0; rows < WINDOW_HEIGHT; rows++)
+	{
+		for(cols = 0; cols < WINDOW_WIDTH; cols++)
+		{
+			gray=((rgb_buf[rows][cols]>>11)*19595+((rgb_buf[rows][cols]>>5)&0x3f)*38469 +(rgb_buf[rows][cols]&0x1f)*7472)>>16;  //灰度计算。公式请百度
+			//白色
+			if(gray >= 23)
+			{
+				switch(counter)
+				{
+					case 1:
+						first.X = cols;
+						first.Y = rows;
+						counter++;
+						break;
+					case 2:
+						//认为第一点
+						if(cols <= first.X + POINT_SIZE && cols >= first.X - POINT_SIZE && \
+							rows <= first.Y  + POINT_SIZE && rows >= first.Y - POINT_SIZE)
+						{
+							break;
+						}
+						second.X = cols;
+						second.Y = rows;
+						counter++;
+						break;
+					case 3:
+						//认为第一点
+						if(cols <= first.X + POINT_SIZE && cols >= first.X - POINT_SIZE && \
+							rows <= first.Y  + POINT_SIZE && rows >= first.Y - POINT_SIZE)
+						{
+							break;
+						}
+						//认为第二点
+						if(cols <= second.X + POINT_SIZE && cols >= second.X - POINT_SIZE && \
+							rows <= second.Y  + POINT_SIZE && rows >= second.Y - POINT_SIZE)
+						{
+							break;
+						}
+						third.X = cols;
+						third.Y = rows;
+						counter++;
+						break;
+					case 4:
+						//认为第一点
+						if(cols <= first.X + POINT_SIZE && cols >= first.X - POINT_SIZE && \
+							rows <= first.Y  + POINT_SIZE && rows >= first.Y - POINT_SIZE)
+						{
+							break;
+						}
+						//认为第二点
+						if(cols <= second.X + POINT_SIZE && cols >= second.X - POINT_SIZE && \
+							rows <= second.Y  + POINT_SIZE && rows >= second.Y - POINT_SIZE)
+						{
+							break;
+						}
+						//认为第三点
+						if(cols <= third.X + POINT_SIZE && cols >= third.X - POINT_SIZE && \
+							rows <= third.Y  + POINT_SIZE && rows >= third.Y - POINT_SIZE)
+						{
+							break;
+						}
+						fourth.X = cols;
+						fourth.Y = rows;
+						counter++;
+						break;
+				
+				}
+			
+			
+			}
+		
+		
+		}
+		
+	
+	
+	}
+	//判断四个顶点
+	if(first.X <= second.X)
+	{
+		left_top 	= first;
+		right_top 	= second;
+	}
+	else
+	{
+		left_top	= second;
+		right_top	= first;
+	}
+	
+	if(third.X <= fourth.X)
+	{
+		left_bottom	= third;
+		right_bottom = fourth;
+		
+	}
+	else 
+	{
+		left_bottom	= fourth;
+		right_bottom = third;
+	}
+	
+	printf("left_top:(%d , %d) ", left_top.X, left_top.Y);
+	printf("right_top:(%d , %d) ", right_top.X, right_top.Y);
+	printf("left_bottom:(%d , %d) ", left_bottom.X, left_bottom.Y);
+	printf("right_bottom:(%d , %d) ", right_bottom.X, right_bottom.Y);
+	printf("\n");
+	//寻找线段
+	//line_top
+	myrect.top = find_line(left_top, right_top);
+	myrect.left = find_line(left_top, left_bottom);
+	myrect.right = find_line(right_top, right_bottom);
+	myrect.bottom = find_line(left_bottom, right_bottom);
+	
+	return myrect;
+	
+
+}
+
+line_t find_line(point_t start, point_t end)
+{
+	line_t line;
+	
+	line.k = (float)(start.Y - end.Y) / (float)(start.X - end.X); 
+	line.b = start.Y - line.k * start.X;
+
+	return line;
+}
 
 
 
@@ -234,8 +533,8 @@ void pid_calculate(void)
 		if(displayMode == BinaryZation)
 		{
 			//计算偏差
-			pid_X.E_now = Aim_X - pid_X.ball_center_X;
-			pid_Y.E_now = Aim_Y - pid_Y.ball_center_Y;
+			pid_X.E_now = Aim[*aim_index].X - pid_X.ball_center_X;
+			pid_Y.E_now = Aim[*aim_index].Y - pid_Y.ball_center_Y;
 			
 			//计算各项作用
 			pid_X.Pout = pid_X.Kp * pid_X.E_now;
@@ -292,10 +591,11 @@ void pid_calculate(void)
 		
 		
 		
-		sprintf(str3, "b_X: %d Ki: %.2f %d", pid_X.ball_center_X, pid_X.Ki, Enable_I_flag);
-		sprintf(str4, "b_Y: %d", pid_Y.ball_center_Y);
+		
 		sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X, pid_X.Kp);
 		sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y, pid_X.Kd);
+		sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);
+		sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
 		//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
 		
 		LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
@@ -328,11 +628,29 @@ void DCMI_IRQHandler(void)
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME);//清除帧中断
 		
 		ov_frame_flag = NEW_frame;
+		
 		//printf("%d  \n", ov_frame_flag);
 		
 	}
 } 
+void TIM3_IRQHandler(void)
+{
+	char frame[6];
+	
+	
+	if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
+	{
+		
+		sprintf(frame, "frame: %d", ov_frame);
+		LCD_ShowString(150, 20 , 100, 16, 16, "          ");
+		LCD_ShowString(150, 20 , 100, 16, 16, frame);
+		ov_frame = 0;
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+	}
 
+
+
+}
 
 
 
