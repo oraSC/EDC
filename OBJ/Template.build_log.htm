@@ -8,44 +8,26 @@ Project File Date:  04/29/2019
 
 <h2>Output:</h2>
 Build target 'EDC'
-linking...
-Program Size: Code=44844 RO-data=8212 RW-data=156 ZI-data=60188  
-FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 0 Warning(s).
-D: subscript out of range
-        Aim[buffer_1_index].X = 45;
-main.c(136): warning:  #175-D: subscript out of range
-        Aim[buffer_1_index].Y = 63;
-main.c(137): warning:  #175-D: subscript out of range
-        Aim[buffer_2_index].X = 96;
-main.c(138): warning:  #175-D: subscript out of range
-        Aim[buffer_2_index].Y = 62;
-main.c(139): warning:  #175-D: subscript out of range
-        Aim[buffer_3_index].X = 46;
-main.c(140): warning:  #175-D: subscript out of range
-        Aim[buffer_3_index].Y = 128;
-main.c(141): warning:  #175-D: subscript out of range
-        Aim[buffer_4_index].X = 96;
-main.c(142): warning:  #175-D: subscript out of range
-        Aim[buffer_4_index].Y = 128;
-main.c(604): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+compiling main.c...
+main.c(397): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
                 LCD_ShowString(10, 220 , 240, 16, 16, str1);
-main.c(605): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+main.c(398): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
                 LCD_ShowString(10, 250 , 240, 16, 16, str2);
-main.c(609): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+main.c(402): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
                 LCD_ShowString(10, 270 , 240, 16, 16, str3);
-main.c(610): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+main.c(403): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
                 LCD_ShowString(10, 300 , 240, 16, 16, str4);
-main.c(646): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+main.c(314): warning:  #177-D: variable "I_count" was declared but never referenced
+        static u8 I_count = 0;
+main.c(439): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
                 LCD_ShowString(150, 20 , 100, 16, 16, frame);
-main.c(658): warning:  #1-D: last line of file ends without a newline
-   
-main.c: 15 warnings, 0 errors
+main.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=44844 RO-data=8212 RW-data=156 ZI-data=60188  
+Program Size: Code=43636 RO-data=8212 RW-data=164 ZI-data=60228  
 FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 15 Warning(s).
-Load "..\\OBJ\\Template.axf" 
+"..\OBJ\Template.axf" - 0 Error(s), 6 Warning(s).
+ion running ...
+mplate.axf" 
 Set JLink Project File to "H:\Electronics_design_contest\code\EDC\USER\JLinkSettings.ini"
 * JLink Info: Device "STM32F407ZG" selected (1024 KB flash, 128 KB RAM).
  
@@ -80,65 +62,3 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-Load "..\\OBJ\\Template.axf" 
-Error: Flash Download failed  -  Target DLL has been cancelled
-+;
-main.c(370): error:  #169: expected a declaration
-        }
-main.c(401): warning:  #12-D: parsing restarts here after previous syntax error
-                                                first.X = cols;
-main.c(402): error:  #77-D: this declaration has no storage class or type specifier
-                                                first.Y = rows;
-main.c(402): error:  #65: expected a ";"
-                                                first.Y = rows;
-main.c(403): error:  #77-D: this declaration has no storage class or type specifier
-                                                counter++;
-main.c(403): error:  #65: expected a ";"
-                                                counter++;
-main.c(404): error:  #169: expected a declaration
-                                                break;
-main.c(405): error:  #169: expected a declaration
-                                        case 2:
-main.c(412): warning:  #12-D: parsing restarts here after previous syntax error
-                                                second.X = cols;
-main.c(413): error:  #77-D: this declaration has no storage class or type specifier
-                                                second.Y = rows;
-main.c(413): error:  #65: expected a ";"
-                                                second.Y = rows;
-main.c(414): error:  #77-D: this declaration has no storage class or type specifier
-                                                counter++;
-main.c(414): error:  #65: expected a ";"
-                                                counter++;
-main.c(415): error:  #169: expected a declaration
-                                                break;
-main.c(416): error:  #169: expected a declaration
-                                        case 3:
-main.c(429): warning:  #12-D: parsing restarts here after previous syntax error
-                                                third.X = cols;
-main.c(430): error:  #77-D: this declaration has no storage class or type specifier
-                                                third.Y = rows;
-main.c(430): error:  #65: expected a ";"
-                                                third.Y = rows;
-main.c(431): error:  #77-D: this declaration has no storage class or type specifier
-                                                counter++;
-main.c(431): error:  #65: expected a ";"
-                                                counter++;
-main.c: 16 warnings, 30 errors
-"..\OBJ\Template.axf" - 30 Error(s), 16 Warning(s).
-Target not created
-Load "..\\OBJ\\Template.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file '..\OBJ\Template.axf'
-Load "..\\OBJ\\Template.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file '..\OBJ\Template.axf'
-Load "..\\OBJ\\Template.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file '..\OBJ\Template.axf'
-Load "..\\OBJ\\Template.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file '..\OBJ\Template.axf'
