@@ -246,23 +246,34 @@ int main(void)
 					//判断位置
 					//成功1：kp = 5， kd = 10     //
 					//成功2：kp = 5, kd = 5
-					pid_X.Kp = 5;
-					pid_Y.Kp = 5;
-					pid_X.Kd = 5;
-					pid_Y.Kd = 5;
+				pid_X.Kp = 5;
+				pid_Y.Kp = 5;
+				pid_X.Kd = 5;
+				pid_Y.Kd = 5;
 ////				}
-//				
-//				
+				//成功
+				if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 1 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 1)
+//				{
+					success++;
+					if(success >= 15)
+					{
+						pid_X.Kp = 0;
+						pid_Y.Kp = 0;
+						pid_X.Kd = 0;
+						pid_Y.Kd = 0;
+					}
+					
+				}
 //				
 //				
 //				//success
-//				//success++;
-//////					if(success >= 60)
-//////					{
-//////						aim_index++;
-//////						success = 0;
-//////					}
-			}
+//				success++;
+//					if(success >= 60)
+//					{
+//						aim_index++;
+//						success = 0;
+//					}
+//			}
 //			//远离
 			else 
 			{
