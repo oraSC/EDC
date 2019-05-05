@@ -53,19 +53,20 @@ typedef struct point{
 }point_t;
 
 point_t Aim[20];
-
+int PWM_init_X[20];
+int PWM_init_Y[20];
 	
 int success = 0;
-int aim_routine[9] = {AIM_5_index};     //对应编号 - 1
+int aim_routine[9] = {AIM_4_index, AIM_5_index};     //对应编号 - 1
 int *aim_index = aim_routine;
-
+char have_ball = 0;
 
 //===================PID变量==============//
 pid_t pid_X;
 pid_t pid_Y;
 
-int PWM_init_X = 1100;
-int PWM_init_Y = 1100;
+//int PWM_init_X = 1100;
+//int PWM_init_Y = 1100;
 
 //目标点
 float Aim_X = 70;
@@ -95,9 +96,9 @@ int main(void)
 	Aim[AIM_2_index].Y = 25;
 	Aim[AIM_3_index].X = 114;
 	Aim[AIM_3_index].Y = 24;
-	Aim[AIM_4_index].X = 13;
-	Aim[AIM_4_index].Y = 93;
-	Aim[AIM_5_index].X = 65;
+	Aim[AIM_4_index].X = 16;
+	Aim[AIM_4_index].Y = 102;
+	Aim[AIM_5_index].X = 67;
 	Aim[AIM_5_index].Y = 100;
 	Aim[AIM_6_index].X = 115;
 	Aim[AIM_6_index].Y = 90;
@@ -121,6 +122,11 @@ int main(void)
 	Aim[buffer_4_index].X = 96;
 	Aim[buffer_4_index].Y = 128;
 
+	//初始值
+	PWM_init_X[AIM_4_index] = 1300;
+	PWM_init_Y[AIM_4_index] = 1100;
+	PWM_init_X[AIM_5_index] = 1100;
+	PWM_init_Y[AIM_5_index] = 1100;
 	
 	displayMode = BinaryZation;
 	ov_frame_flag = OLD_frame;
@@ -164,8 +170,8 @@ int main(void)
 	
 	/*************************************舵机**************************************/
 	motor_init(50);			//50HZ -> 20ms
-	TIM_SetCompare1(TIM4, PWM_init_X);	//修改比较值，修改占空比      输出pid计算值
-	TIM_SetCompare2(TIM4, PWM_init_Y);	//修改比较值，修改占空比
+	TIM_SetCompare1(TIM4, 1100);	//修改比较值，修改占空比      输出pid计算值
+	TIM_SetCompare2(TIM4, 1100);	//修改比较值，修改占空比
 		
 	
 	/********************************pid*********************************************/
@@ -211,7 +217,7 @@ int main(void)
 							
 							
 							LCD->LCD_RAM=WHITE;
-							
+							have_ball = 1;
 					}
 					else
 					{		
@@ -262,6 +268,11 @@ int main(void)
 						pid_X.Kd = 0;
 						pid_Y.Kd = 0;
 					}
+					if(success >= 70)
+					{
+						aim_index++;
+					
+					}
 					
 				}
 //				
@@ -310,7 +321,7 @@ int main(void)
 			pid_X.ball_min_X = 160;
 			pid_Y.ball_max_Y = 0;
 			pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
-					
+				
 		
 			//pid计算
 			pid_calculate();
@@ -369,9 +380,19 @@ void pid_calculate(void)
 			pid_X.Dout = pid_X.Kd * (pid_X.E_now - pid_X.E_last);
 			pid_Y.Dout = pid_Y.Kd * (pid_Y.E_now - pid_Y.E_last);
 			
-			PWM_X = PWM_init_X + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
-			PWM_Y = PWM_init_Y + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
-			        
+			if(have_ball == 1)
+			{
+				PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
+				PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+				
+			}
+			
+			else
+			{
+				PWM_X = PWM_init_X[*aim_index];  
+				PWM_Y = PWM_init_Y[*aim_index];
+			}    
+			have_ball = 0;	
 			
 			pid_X.E_last = pid_X.E_now;  //KD
 			pid_Y.E_last = pid_Y.E_now;
@@ -386,8 +407,8 @@ void pid_calculate(void)
 		}
 		else 
 		{
-			PWM_X = PWM_init_X;
-			PWM_Y = PWM_init_Y;
+			PWM_X = PWM_init_X[*aim_index];
+			PWM_Y = PWM_init_Y[*aim_index];
 		}
 		
 		TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
@@ -396,8 +417,8 @@ void pid_calculate(void)
 		
 		
 		
-		sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X, pid_X.Kp);
-		sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y, pid_X.Kd);
+		sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
+		sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
 		sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);
 		sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
 		//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
