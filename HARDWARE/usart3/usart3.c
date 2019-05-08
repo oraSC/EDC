@@ -59,8 +59,11 @@ void usart3_init(u32 bound)
 extern int PWM_X, PWM_Y;
 extern pid_t pid_X;
 extern pid_t pid_Y;
-extern int PWM_init_X;
-extern int PWM_init_Y;
+
+extern int aim_routine[5][9];
+extern int Task_index;
+extern int *aim_index;
+
 
 #define USART3_REC_LEN 20
 u8 USART3_RX_BUF[USART3_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
@@ -76,7 +79,9 @@ extern int displayMode;
 void USART3_IRQHandler(void)
 {
 	u8 Res;
-	  
+	int PWM_X;
+	int PWM_Y;
+	
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 		Res =USART_ReceiveData(USART3);//(USART3->DR);	//读取接收到的数据
@@ -84,7 +89,7 @@ void USART3_IRQHandler(void)
 		if(Res == 'm')
 		{
 			displayMode = -displayMode;
-			printf("m\n");
+			//printf("m\n");
 		}
 		else 
 		{
@@ -100,8 +105,10 @@ void USART3_IRQHandler(void)
 						
 					    if(RGB == displayMode)
 						{
-							PWM_init_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;
-							PWM_init_Y =(USART3_RX_BUF[4]-'0')*1000+(USART3_RX_BUF[5]-'0')*100+(USART3_RX_BUF[6]-'0')*10+(USART3_RX_BUF[7]-'0')*1;
+							PWM_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;
+							PWM_Y =(USART3_RX_BUF[4]-'0')*1000+(USART3_RX_BUF[5]-'0')*100+(USART3_RX_BUF[6]-'0')*10+(USART3_RX_BUF[7]-'0')*1;
+							TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
+							TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
 						}
 						
 						if(USART3_RX_BUF[0] == 'K' && USART3_RX_BUF[1]=='P') //kp
@@ -116,6 +123,13 @@ void USART3_IRQHandler(void)
 						else if(USART3_RX_BUF[0] == 'K' && USART3_RX_BUF[1]=='I') //ki
 						{
 							pid_Y.Ki = pid_X.Ki = (USART3_RX_BUF[2] - '0' )*100 + (USART3_RX_BUF[3] - '0' ) * 10 +(USART3_RX_BUF[4] - '0' ) * 1 + (USART3_RX_BUF[6] - '0') * 0.1 + (USART3_RX_BUF[7] - '0' ) * 0.01 + (USART3_RX_BUF[8] - '0' ) * 0.001 ;							
+						}
+						else if(USART3_RX_BUF[0] == 'T')
+						{
+							//转向另一个任务
+							Task_index =  USART3_RX_BUF[1] - '0';
+							aim_index = aim_routine[Task_index];
+						
 						}
 						
 						memset(USART3_RX_BUF, 0, sizeof(USART3_RX_BUF));

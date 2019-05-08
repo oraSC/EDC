@@ -8,6 +8,12 @@
 #include "ov2640.h"	
 #include "pid.h"
 
+#define TASK_1_index	1
+#define TASK_2_index	2
+#define	TASK_3_index	3
+#define TASK_4_index	4
+
+#define A_Task_Finish	0
 #define AIM_1_index		1
 #define AIM_2_index		2
 #define AIM_3_index		3
@@ -21,6 +27,7 @@
 #define buffer_2_index	11
 #define buffer_3_index	12
 #define buffer_4_index	13
+
 
 
 #define WINDOW_WIDTH 	148
@@ -57,8 +64,16 @@ int PWM_init_X[20];
 int PWM_init_Y[20];
 	
 int success = 0;
-int aim_routine[9] = {AIM_4_index, AIM_5_index};     //对应编号 - 1
-int *aim_index = aim_routine;
+int aim_routine[5][9] = {	{0},
+							{AIM_2_index, A_Task_Finish},						//任务一
+							{AIM_5_index, A_Task_Finish},						//任务二
+							{AIM_4_index, AIM_5_index, A_Task_Finish},			//任务三
+							{AIM_9_index, A_Task_Finish}						//任务四
+							
+							
+						};     //对应编号 - 1
+int Task_index = TASK_3_index;
+int *aim_index = aim_routine[TASK_3_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -96,18 +111,18 @@ int main(void)
 	Aim[AIM_2_index].Y = 25;
 	Aim[AIM_3_index].X = 114;
 	Aim[AIM_3_index].Y = 24;
-	Aim[AIM_4_index].X = 16;
-	Aim[AIM_4_index].Y = 102;
-	Aim[AIM_5_index].X = 67;
-	Aim[AIM_5_index].Y = 100;
+	Aim[AIM_4_index].X = 15;
+	Aim[AIM_4_index].Y = 100;
+	Aim[AIM_5_index].X = 66;
+	Aim[AIM_5_index].Y = 97;
 	Aim[AIM_6_index].X = 115;
 	Aim[AIM_6_index].Y = 90;
 	Aim[AIM_7_index].X = 15;
 	Aim[AIM_7_index].Y = 157;
-	Aim[AIM_8_index].X = 65;
-	Aim[AIM_8_index].Y = 156;
-	Aim[AIM_9_index].X = 116;
-	Aim[AIM_9_index].Y = 155;
+	Aim[AIM_8_index].X = 67;
+	Aim[AIM_8_index].Y = 164;
+	Aim[AIM_9_index].X = 118;
+	Aim[AIM_9_index].Y = 162;
 	
 	//buffer
 	Aim[buffer_1_index].X = 45;
@@ -127,6 +142,10 @@ int main(void)
 	PWM_init_Y[AIM_4_index] = 1100;
 	PWM_init_X[AIM_5_index] = 1100;
 	PWM_init_Y[AIM_5_index] = 1100;
+	PWM_init_X[AIM_8_index] = 1200;
+	PWM_init_Y[AIM_8_index] = 1000;
+	PWM_init_X[AIM_9_index] = 1000;
+	PWM_init_Y[AIM_9_index] = 1000;
 	
 	displayMode = BinaryZation;
 	ov_frame_flag = OLD_frame;
@@ -175,8 +194,8 @@ int main(void)
 		
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 10, 0, 170); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 10, 0, 170);
+	pid_init(&pid_X, 15, 0, 170); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 15, 0, 170);
 	TIM3_init(1); //计算帧数中断
 	
 	while(1)
@@ -188,7 +207,7 @@ int main(void)
 		LCD_WriteRAM_Prepare();		//开始写入GRAM
 		for(i=0;i<WINDOW_HEIGHT;i++)
 		{
-			
+			 
 			for(j=0; j < WINDOW_WIDTH; j++)
 			{
 				if(j == WINDOW_WIDTH - 1)
@@ -199,34 +218,39 @@ int main(void)
 				
 				
 				/*************************************************二值化*******************************************/
-				if(displayMode == BinaryZation)
-				{
+				
 					
-					gray=((rgb_buf[i][j]>>11)*19595+((rgb_buf[i][j]>>5)&0x3f)*38469 +(rgb_buf[i][j]&0x1f)*7472)>>16;  //灰度计算。公式请百度
-					if(gray>=22)  //固定阈值二值化
-					{			  
-							//if(i>8&&i<136&&j<200&&j>16)  //此处遍历图像寻找小球最上最下 最左 最右四个点坐标
-							{
-								if(j > pid_X.ball_max_X)	pid_X.ball_max_X = j;
-								if(j < pid_X.ball_min_X) 	pid_X.ball_min_X = j;
-							 
-								if(i > pid_Y.ball_max_Y)	pid_Y.ball_max_Y = i;
-								if(i < pid_Y.ball_min_Y) 	pid_Y.ball_min_Y = i;
+				gray=((rgb_buf[i][j]>>11)*19595+((rgb_buf[i][j]>>5)&0x3f)*38469 +(rgb_buf[i][j]&0x1f)*7472)>>16;  //灰度计算。公式请百度
+				if(gray>=22)  //固定阈值二值化
+				{			  
+						//if(i>8&&i<136&&j<200&&j>16)  //此处遍历图像寻找小球最上最下 最左 最右四个点坐标
+						{
+							if(j > pid_X.ball_max_X)	pid_X.ball_max_X = j;
+							if(j < pid_X.ball_min_X) 	pid_X.ball_min_X = j;
 						 
-							}
-							
-							
+							if(i > pid_Y.ball_max_Y)	pid_Y.ball_max_Y = i;
+							if(i < pid_Y.ball_min_Y) 	pid_Y.ball_min_Y = i;
+					 
+						}
+						
+						if(displayMode == BinaryZation)
+						{
 							LCD->LCD_RAM=WHITE;
 							have_ball = 1;
-					}
-					else
-					{		
-						
-						LCD->LCD_RAM=BLACK;
-					}
+						}
 				}
+				else
+				{		
+					if(displayMode == BinaryZation)
+					{
+						LCD->LCD_RAM=BLACK;
+						
+					}
+					
+				}
+			
 				/***********************************************RGB****************************************************/
-				else if(displayMode == RGB)
+				if(displayMode == RGB)
 				{
 					LCD->LCD_RAM=rgb_buf[i][j];
 				}
@@ -237,69 +261,69 @@ int main(void)
 			pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
 			
 			
-//			
-////			//判断位置是否不动
-////			if(pid_X.ball_last_center_X <= pid_X.ball_center_X + 1 && pid_X.ball_last_center_X >= pid_X.ball_center_X - 1  \
-////				&& pid_Y.ball_last_center_Y <= pid_Y.ball_center_Y + 1 && pid_Y.ball_last_center_Y >= pid_Y.ball_center_Y - 1)
-////			//{
-//			//靠近
-			if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 3 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 3)
-			{
-////				close_counter ++;
-////				if(close_counter >= 4)
-////				{
-					//close_distance = 20;
-					//判断位置
-					//成功1：kp = 5， kd = 10     //
-					//成功2：kp = 5, kd = 5
-				pid_X.Kp = 5;
-				pid_Y.Kp = 5;
-				pid_X.Kd = 5;
-				pid_Y.Kd = 5;
+		
+
+		//靠近
+		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 4 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 4)
+		{
+				close_counter ++;
+				if(close_counter > 10)
+				{	
+					pid_X.Kp = 0.5;
+					pid_Y.Kp = 0.5;
+					pid_X.Kd = 2;
+					pid_Y.Kd = 2;
 ////				}
-				//成功
-				if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 1 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 1)
-//				{
-					success++;
-					if(success >= 15)
+					//成功
+					if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 2 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 2)
 					{
-						pid_X.Kp = 0;
-						pid_Y.Kp = 0;
-						pid_X.Kd = 0;
-						pid_Y.Kd = 0;
+						success++;
+						if(success >= 10)
+						{
+							pid_X.Kp = 0;
+							pid_Y.Kp = 0;
+							pid_X.Kd = 0;
+							pid_Y.Kd = 0;
+						}
+						if(success >= 70)
+						{
+							
+							aim_index++;
+							if(*aim_index == A_Task_Finish)
+							{
+								//转向另一个任务
+								Task_index++;
+								aim_index = aim_routine[Task_index];
+							}
+							close_counter = 0;
+						}
+						
 					}
-					if(success >= 70)
-					{
-						aim_index++;
-					
-					}
-					
 				}
-//				
-//				
-//				//success
-//				success++;
-//					if(success >= 60)
-//					{
-//						aim_index++;
-//						success = 0;
-//					}
-//			}
-//			//远离
-			else 
+
+		}
+		//中距离
+		else if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 10 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 10)
+		{
+			close_counter ++;
+			if(close_counter >= 20)
 			{
-				
-//				close_counter --;
-//				if(close_counter <= 0)
-//				{
-//					close_distance = 5;
-//				}
-				//成功1：kp = 15， kd = 170     //
-				//成功2：kp = 15, kd = 170
 				pid_X.Kp = 15;
 				pid_Y.Kp = 15;
-				pid_X.Kd = 170;
-				pid_Y.Kd = 170;
+				pid_X.Kd = 60;
+				pid_Y.Kd = 60;
+				success = 0;
+			}
+		
+		}
+		//远离
+			else 
+			{
+				close_counter = 0;
+				pid_X.Kp = 10;
+				pid_Y.Kp = 10;
+				pid_X.Kd = 180;
+				pid_Y.Kd = 180;
 				success = 0;
 				
 //				ball_static++;
@@ -308,7 +332,7 @@ int main(void)
 //					Enable_I_flag = ENABLE_I;
 //				}
 			}
-//		
+		
 
 ////			{
 ////				ball_static = 0;
@@ -338,7 +362,7 @@ void pid_calculate(void)
 	char str2[30] = {0};
 	char str3[30] = {0};
 	char str4[30] = {0};
-	//char str5[30] = {0};
+	char str5[30] = {0};
 	
 	
 	//if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
@@ -399,43 +423,46 @@ void pid_calculate(void)
 			
 			
 			
-			if(PWM_Y > 2500)	PWM_Y = 2500;                                    //pid输出限幅度 防止抽风
+			if(PWM_Y > 1600)	PWM_Y = 1600;                                    //pid输出限幅度 防止抽风
 			if(PWM_Y < 500)		PWM_Y = 500;
 			
-			if(PWM_X > 2500)	PWM_X=2500;
+			if(PWM_X > 1600)	PWM_X=1600;
 			if(PWM_X < 500)		PWM_X=500;
+			
+			TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
+			TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
 		}
 		else 
 		{
 			PWM_X = PWM_init_X[*aim_index];
 			PWM_Y = PWM_init_Y[*aim_index];
+			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
+			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
+			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);
+			sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
+			//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
+
+			LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
+			LCD_ShowString(10, 250 , 240, 16, 16, "                    ");
+
+			LCD_ShowString(10, 220 , 240, 16, 16, str1);
+			LCD_ShowString(10, 250 , 240, 16, 16, str2);
+
+			LCD_ShowString(10, 270 , 240, 16, 16, "                    ");
+			LCD_ShowString(10, 300 , 240, 16, 16, "                    ");
+			LCD_ShowString(10, 270 , 240, 16, 16, str3);
+			LCD_ShowString(10, 300 , 240, 16, 16, str4);
+
+			//LCD_ShowString(30, 290 , 240, 16, 16, "                    ");
+			//LCD_ShowString(30, 290 , 240, 16, 16, str5);
 		}
 		
-		TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
-		TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
 		
 		
 		
 		
-		sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
-		sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
-		sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);
-		sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
-		//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
 		
-		LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
-		LCD_ShowString(10, 250 , 240, 16, 16, "                    ");
-	
-		LCD_ShowString(10, 220 , 240, 16, 16, str1);
-		LCD_ShowString(10, 250 , 240, 16, 16, str2);
-		
-		LCD_ShowString(10, 270 , 240, 16, 16, "                    ");
-		LCD_ShowString(10, 300 , 240, 16, 16, "                    ");
-		LCD_ShowString(10, 270 , 240, 16, 16, str3);
-		LCD_ShowString(10, 300 , 240, 16, 16, str4);
-		
-//		LCD_ShowString(30, 290 , 240, 16, 16, "                    ");
-//		LCD_ShowString(30, 290 , 240, 16, 16, str5);
+
 		
 	}
 	//TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
