@@ -364,7 +364,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,SVGA</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\HARDWARE\motor;..\HARDWARE\lcd;..\HARDWARE\DCMI;..\HARDWARE\OV2640;..\HARDWARE\PID;..\HARDWARE\usart3</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\HARDWARE\motor;..\HARDWARE\lcd;..\HARDWARE\DCMI;..\HARDWARE\OV2640;..\HARDWARE\PID;..\HARDWARE\usart3;..\HARDWARE\init</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -566,6 +566,11 @@
               <FileName>usart3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\usart3\usart3.c</FilePath>
+            </File>
+            <File>
+              <FileName>init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\init\init.c</FilePath>
             </File>
           </Files>
         </Group>

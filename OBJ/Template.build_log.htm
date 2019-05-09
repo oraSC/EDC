@@ -4,30 +4,15 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 H:\Electronics_design_contest\code\EDC\USER\EDC.uvprojx
-Project File Date:  04/29/2019
+Project File Date:  05/08/2019
 
 <h2>Output:</h2>
 Build target 'EDC'
-compiling main.c...
-main.c(448): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 220 , 240, 16, 16, str1);
-main.c(449): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 250 , 240, 16, 16, str2);
-main.c(453): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 270 , 240, 16, 16, str3);
-main.c(454): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 300 , 240, 16, 16, str4);
-main.c(360): warning:  #177-D: variable "I_count" was declared but never referenced
-        static u8 I_count = 0;
-main.c(365): warning:  #177-D: variable "str5" was declared but never referenced
-        char str5[30] = {0};
-main.c(498): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                LCD_ShowString(150, 20 , 100, 16, 16, frame);
-main.c: 7 warnings, 0 errors
 linking...
-Program Size: Code=44300 RO-data=8212 RW-data=308 ZI-data=60388  
+Program Size: Code=44556 RO-data=8212 RW-data=296 ZI-data=60704  
 FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 7 Warning(s).
+"..\OBJ\Template.axf" - 0 Error(s), 0 Warning(s).
+r(s), 0 Warning(s).
 Load "..\\OBJ\\Template.axf" 
 Set JLink Project File to "H:\Electronics_design_contest\code\EDC\USER\JLinkSettings.ini"
 * JLink Info: Device "STM32F407ZG" selected (1024 KB flash, 128 KB RAM).
@@ -63,128 +48,9 @@ Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-compiling main.c...
-main.c(461): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 220 , 240, 16, 16, str1);
-main.c(462): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 250 , 240, 16, 16, str2);
-main.c(466): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 270 , 240, 16, 16, str3);
-main.c(467): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                        LCD_ShowString(10, 300 , 240, 16, 16, str4);
-main.c(373): warning:  #177-D: variable "I_count" was declared but never referenced
-        static u8 I_count = 0;
-main.c(378): warning:  #177-D: variable "str5" was declared but never referenced
-        char str5[30] = {0};
-main.c(511): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
-                LCD_ShowString(150, 20 , 100, 16, 16, frame);
-main.c: 7 warnings, 0 errors
-"main.c" - 0 Error(s), 7 Warning(s).
-xxx/STM32F4xxx: Can not attach to CPU. Trying connect under reset.
-* JLink Info: STM32F2xxx/STM32F4xxx: Can not attach to CPU. Trying connect under reset.
-* JLink Info: STM32F2xxx/STM32F4xxx: Can not attach to CPU. Trying connect under reset.
-Contents mismatch at: 08000000H  (Flash=00H  Required=18H) !
-Contents mismatch at: 08000001H  (Flash=BEH  Required=EDH) !
-Contents mismatch at: 08000002H  (Flash=0AH  Required=00H) !
-Contents mismatch at: 08000003H  (Flash=E0H  Required=20H) !
-Contents mismatch at: 08000004H  (Flash=0DH  Required=99H) !
-Contents mismatch at: 08000005H  (Flash=78H  Required=0DH) !
-Contents mismatch at: 08000006H  (Flash=2DH  Required=00H) !
-Contents mismatch at: 08000007H  (Flash=06H  Required=08H) !
-Contents mismatch at: 08000008H  (Flash=68H  Required=6DH) !
-Contents mismatch at: 08000009H  (Flash=40H  Required=0BH) !
-Contents mismatch at: 0800000AH  (Flash=08H  Required=00H) !
-Contents mismatch at: 0800000BH  (Flash=24H  Required=08H) !
-Contents mismatch at: 0800000CH  (Flash=40H  Required=6FH) !
-Contents mismatch at: 0800000DH  (Flash=00H  Required=0BH) !
-Contents mismatch at: 0800000FH  (Flash=D3H  Required=08H) !
-Contents mismatch at: 08000010H  (Flash=58H  Required=73H) !
-Contents mismatch at: 08000011H  (Flash=40H  Required=0BH) !
-Contents mismatch at: 08000012H  (Flash=64H  Required=00H) !
-Contents mismatch at: 08000013H  (Flash=1EH  Required=08H) !
-Contents mismatch at: 08000014H  (Flash=FAH  Required=77H) !
-Contents mismatch at: 08000015H  (Flash=D1H  Required=0BH) !
-Contents mismatch at: 08000016H  (Flash=49H  Required=00H) !
-Contents mismatch at: 08000017H  (Flash=1CH  Required=08H) !
-Contents mismatch at: 08000018H  (Flash=52H  Required=7BH) !
-Contents mismatch at: 08000019H  (Flash=1EH  Required=0BH) !
-Contents mismatch at: 0800001BH  (Flash=2AH  Required=08H) !
-Contents mismatch at: 0800001CH  (Flash=F2H  Required=00H) !
-Contents mismatch at: 0800001DH  (Flash=D1H  Required=00H) !
-Contents mismatch at: 0800001EH  (Flash=70H  Required=00H) !
-Contents mismatch at: 0800001FH  (Flash=47H  Required=00H) !
-Contents mismatch at: 08000020H  (Flash=05H  Required=00H) !
-Contents mismatch at: 08000021H  (Flash=E0H  Required=00H) !
-Contents mismatch at: 08000022H  (Flash=03H  Required=00H) !
-Contents mismatch at: 08000023H  (Flash=78H  Required=00H) !
-Contents mismatch at: 08000024H  (Flash=40H  Required=00H) !
-Contents mismatch at: 08000025H  (Flash=1CH  Required=00H) !
-Contents mismatch at: 08000026H  (Flash=93H  Required=00H) !
-Contents mismatch at: 08000027H  (Flash=42H  Required=00H) !
-Contents mismatch at: 08000028H  (Flash=01H  Required=00H) !
-Contents mismatch at: 08000029H  (Flash=D0H  Required=00H) !
-Contents mismatch at: 0800002AH  (Flash=01H  Required=00H) !
-Contents mismatch at: 0800002BH  (Flash=20H  Required=00H) !
-Contents mismatch at: 0800002CH  (Flash=70H  Required=7FH) !
-Contents mismatch at: 0800002DH  (Flash=47H  Required=0BH) !
-Contents mismatch at: 0800002EH  (Flash=49H  Required=00H) !
-Contents mismatch at: 0800002FH  (Flash=1EH  Required=08H) !
-Contents mismatch at: 08000030H  (Flash=F7H  Required=81H) !
-Contents mismatch at: 08000031H  (Flash=D2H  Required=0BH) !
-Contents mismatch at: 08000033H  (Flash=20H  Required=08H) !
-Contents mismatch at: 08000034H  (Flash=70H  Required=00H) !
-Contents mismatch at: 08000035H  (Flash=47H  Required=00H) !
-Contents mismatch at: 08000036H  (Flash=91H  Required=00H) !
-Contents mismatch at: 08000037H  (Flash=D7H  Required=00H) !
-Contents mismatch at: 08000038H  (Flash=00H  Required=83H) !
-Contents mismatch at: 08000039H  (Flash=03H  Required=0BH) !
-Contents mismatch at: 0800003BH  (Flash=0EH  Required=08H) !
-Contents mismatch at: 0800003CH  (Flash=20H  Required=85H) !
-Contents mismatch at: 0800003DH  (Flash=28H  Required=0BH) !
-Contents mismatch at: 0800003EH  (Flash=02H  Required=00H) !
-Contents mismatch at: 0800003FH  (Flash=D3H  Required=08H) !
-Contents mismatch at: 08000040H  (Flash=40H  Required=B3H) !
-Contents mismatch at: 08000041H  (Flash=09H  Required=0DH) !
-Contents mismatch at: 08000043H  (Flash=1DH  Required=08H) !
-Contents mismatch at: 08000044H  (Flash=70H  Required=B3H) !
-Contents mismatch at: 08000045H  (Flash=47H  Required=0DH) !
-Contents mismatch at: 08000046H  (Flash=10H  Required=00H) !
-Contents mismatch at: 08000047H  (Flash=28H  Required=08H) !
-Contents mismatch at: 08000048H  (Flash=02H  Required=B3H) !
-Contents mismatch at: 08000049H  (Flash=D3H  Required=0DH) !
-Contents mismatch at: 0800004BH  (Flash=09H  Required=08H) !
-Contents mismatch at: 0800004CH  (Flash=C0H  Required=B3H) !
-Contents mismatch at: 0800004DH  (Flash=1CH  Required=0DH) !
-Contents mismatch at: 0800004EH  (Flash=70H  Required=00H) !
-Contents mismatch at: 0800004FH  (Flash=47H  Required=08H) !
-Contents mismatch at: 08000050H  (Flash=80H  Required=B3H) !
-Contents mismatch at: 08000051H  (Flash=08H  Required=0DH) !
-Contents mismatch at: 08000052H  (Flash=70H  Required=00H) !
-Contents mismatch at: 08000053H  (Flash=47H  Required=08H) !
-Contents mismatch at: 08000054H  (Flash=42H  Required=B3H) !
-Contents mismatch at: 08000055H  (Flash=48H  Required=0DH) !
-Contents mismatch at: 08000056H  (Flash=41H  Required=00H) !
-Contents mismatch at: 08000057H  (Flash=49H  Required=08H) !
-Contents mismatch at: 08000058H  (Flash=41H  Required=B3H) !
-Contents mismatch at: 08000059H  (Flash=60H  Required=0DH) !
-Contents mismatch at: 0800005AH  (Flash=42H  Required=00H) !
-Contents mismatch at: 0800005BH  (Flash=49H  Required=08H) !
-Contents mismatch at: 0800005CH  (Flash=41H  Required=B3H) !
-Contents mismatch at: 0800005DH  (Flash=60H  Required=0DH) !
-Contents mismatch at: 0800005FH  (Flash=21H  Required=08H) !
-Contents mismatch at: 08000060H  (Flash=01H  Required=B3H) !
-Contents mismatch at: 08000061H  (Flash=60H  Required=0DH) !
-Contents mismatch at: 08000062H  (Flash=C1H  Required=00H) !
-Contents mismatch at: 08000063H  (Flash=68H  Required=08H) !
-Contents mismatch at: 08000064H  (Flash=F0H  Required=B3H) !
-Contents mismatch at: 08000065H  (Flash=22H  Required=0DH) !
-Contents mismatch at: 08000066H  (Flash=11H  Required=00H) !
-Contents mismatch at: 08000067H  (Flash=43H  Required=08H) !
-Contents mismatch at: 08000068H  (Flash=C1H  Required=B3H) !
-Contents mismatch at: 08000069H  (Flash=60H  Required=0DH) !
-Contents mismatch at: 0800006AH  (Flash=40H  Required=00H) !
-Too many errors to display !
-Error: Flash Download failed  -  "Cortex-M4"
+ta=296 ZI-data=60704  
+FromELF: creating hex file...
+"..\OBJ\Template.axf" - 0 Error(s), 7 Warning(s).
 Load "..\\OBJ\\Template.axf" 
 Set JLink Project File to "H:\Electronics_design_contest\code\EDC\USER\JLinkSettings.ini"
 * JLink Info: Device "STM32F407ZG" selected (1024 KB flash, 128 KB RAM).

@@ -46,3 +46,4 @@
 ..\obj\main.o: ..\HARDWARE\OV2640\ov2640.h
 ..\obj\main.o: ..\HARDWARE\OV2640\sccb.h
 ..\obj\main.o: ..\HARDWARE\PID\pid.h
+..\obj\main.o: ..\HARDWARE\init\init.h

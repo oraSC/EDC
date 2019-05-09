@@ -7,31 +7,10 @@
 #include "dcmi.h"	
 #include "ov2640.h"	
 #include "pid.h"
-
-#define TASK_1_index	1
-#define TASK_2_index	2
-#define	TASK_3_index	3
-#define TASK_4_index	4
-
-#define A_Task_Finish	0
-#define AIM_1_index		1
-#define AIM_2_index		2
-#define AIM_3_index		3
-#define AIM_4_index		4
-#define AIM_5_index		5
-#define AIM_6_index		6
-#define AIM_7_index		7
-#define AIM_8_index		8
-#define AIM_9_index		9
-#define buffer_1_index	10
-#define buffer_2_index	11
-#define buffer_3_index	12
-#define buffer_4_index	13
+#include "init.h"
 
 
 
-#define WINDOW_WIDTH 	148
-#define WINDOW_HEIGHT	196
 #define Width_Start		10
 #define Width_End		150
 #define Height_Start	10
@@ -51,15 +30,7 @@ int displayMode;
 u16 rgb_buf[WINDOW_HEIGHT][WINDOW_WIDTH]; 
 u16 gray;
 
-//点：(X, Y)
-typedef struct point{
-	
-	int X;
-	int Y;
-
-}point_t;
-
-point_t Aim[20];
+aim_t Aim[20];
 int PWM_init_X[20];
 int PWM_init_Y[20];
 	
@@ -68,24 +39,18 @@ int aim_routine[5][9] = {	{0},
 							{AIM_2_index, A_Task_Finish},						//任务一
 							{AIM_5_index, A_Task_Finish},						//任务二
 							{AIM_4_index, AIM_5_index, A_Task_Finish},			//任务三
-							{AIM_9_index, A_Task_Finish}						//任务四
-							
-							
+							{buffer_1_index, buffer_2_index, buffer_4_index, AIM_9_index, A_Task_Finish}						//任务四
+										
 						};     //对应编号 - 1
-int Task_index = TASK_3_index;
-int *aim_index = aim_routine[TASK_3_index];
+int Task_index = TASK_4_index;
+int *aim_index = aim_routine[TASK_4_index];
 char have_ball = 0;
 
 //===================PID变量==============//
 pid_t pid_X;
 pid_t pid_Y;
 
-//int PWM_init_X = 1100;
-//int PWM_init_Y = 1100;
 
-//目标点
-float Aim_X = 70;
-float Aim_Y = 70;
 int PWM_X = 0;
 int PWM_Y = 0;
 u8 ov_frame_flag;  						//帧率
@@ -96,7 +61,6 @@ void pid_calculate(void);
 
 int ov_frame = 0;
 int close_counter = 0;
-int close_distance = 5;
 
 int main(void)
 {
@@ -104,89 +68,13 @@ int main(void)
 	
 	u16 i,j;
 	
-	//Aim
-	Aim[AIM_1_index].X = 12;
-	Aim[AIM_1_index].Y = 28;
-	Aim[AIM_2_index].X = 62;
-	Aim[AIM_2_index].Y = 25;
-	Aim[AIM_3_index].X = 114;
-	Aim[AIM_3_index].Y = 24;
-	Aim[AIM_4_index].X = 15;
-	Aim[AIM_4_index].Y = 100;
-	Aim[AIM_5_index].X = 66;
-	Aim[AIM_5_index].Y = 97;
-	Aim[AIM_6_index].X = 115;
-	Aim[AIM_6_index].Y = 90;
-	Aim[AIM_7_index].X = 15;
-	Aim[AIM_7_index].Y = 157;
-	Aim[AIM_8_index].X = 67;
-	Aim[AIM_8_index].Y = 164;
-	Aim[AIM_9_index].X = 118;
-	Aim[AIM_9_index].Y = 162;
-	
-	//buffer
-	Aim[buffer_1_index].X = 45;
-	Aim[buffer_1_index].Y = 63;
-	
-	Aim[buffer_2_index].X = 96;
-	Aim[buffer_2_index].Y = 62;
-	
-	Aim[buffer_3_index].X = 46;
-	Aim[buffer_3_index].Y = 128;
-	
-	Aim[buffer_4_index].X = 96;
-	Aim[buffer_4_index].Y = 128;
-
-	//初始值
-	PWM_init_X[AIM_4_index] = 1300;
-	PWM_init_Y[AIM_4_index] = 1100;
-	PWM_init_X[AIM_5_index] = 1100;
-	PWM_init_Y[AIM_5_index] = 1100;
-	PWM_init_X[AIM_8_index] = 1200;
-	PWM_init_Y[AIM_8_index] = 1000;
-	PWM_init_X[AIM_9_index] = 1000;
-	PWM_init_Y[AIM_9_index] = 1000;
-	
-	displayMode = BinaryZation;
+	displayMode = RGB;
 	ov_frame_flag = OLD_frame;
 	
-	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
-	delay_init(168);      //初始化延时函数
-	uart_init(115200);		//初始化串口波特率为115200
-	usart3_init(9600);
- 	LCD_Init();           //初始化LCD FSMC接口
-	POINT_COLOR=RED;      //画笔颜色：红色
-	
-	
-	/********************************摄像头准备*********************************/
-	while(OV2640_Init())//初始化OV2640
-	{
-		LCD_ShowString(30,130,240,16,16,"OV2640 ERR");
-		delay_ms(200);
-	    LCD_Fill(30,130,239,170,WHITE);
-		delay_ms(200);
-	}	
-//	OV2640_ImageSize_Set(1600, 1200);
-	OV2640_ImageWin_Set(0, 0, 800, 600);
-	
-	LCD_ShowString(30,130,200,16,16,"OV2640 OK");  
-	delay_ms(1000);
-	OV2640_RGB565_Mode();	//JPEG模式
-	My_DCMI_Init();			//DCMI配置
-	DCMI_DMA_Init((u32)rgb_buf,0, sizeof(rgb_buf)/4,DMA_MemoryDataSize_HalfWord,DMA_MemoryInc_Enable);//DCMI DMA配置
-	//DCMI_DMA_Init((u32)&LCD->LCD_RAM,0, 1,DMA_MemoryDataSize_HalfWord,DMA_MemoryInc_Disable);//DCMI DMA??  
- 	printf("%d", lcddev.width);
-	printf("%d", lcddev.height); 
-	//OV2640_OutSize_Set( lcddev.width, lcddev.height );
-	//OV2640_OutSize_Set(WINDOW_WIDTH, WINDOW_HEIGHT); 
-	OV2640_OutSize_Set(WINDOW_WIDTH, WINDOW_HEIGHT);
-	
-	//OV2640_OutSize_Set(lcddev.width, lcddev.height);
-	
-	DCMI_Start(); 			//启动传输 
+	sys_init();
+
 	/*******************************************************************************/
-	
+
 	/*************************************舵机**************************************/
 	motor_init(50);			//50HZ -> 20ms
 	TIM_SetCompare1(TIM4, 1100);	//修改比较值，修改占空比      输出pid计算值
@@ -264,7 +152,8 @@ int main(void)
 		
 
 		//靠近
-		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 4 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 4)
+		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].close_distance \
+			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].close_distance)
 		{
 				close_counter ++;
 				if(close_counter > 10)
@@ -275,7 +164,8 @@ int main(void)
 					pid_Y.Kd = 2;
 ////				}
 					//成功
-					if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 2 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 2)
+					if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
+						&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
 					{
 						success++;
 						if(success >= 10)
@@ -303,15 +193,16 @@ int main(void)
 
 		}
 		//中距离
-		else if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= 10 && abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= 10)
+		else if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].middle_distance \
+			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].middle_distance)
 		{
 			close_counter ++;
 			if(close_counter >= 20)
 			{
-				pid_X.Kp = 15;
-				pid_Y.Kp = 15;
-				pid_X.Kd = 60;
-				pid_Y.Kd = 60;
+				pid_X.Kp = 13;
+				pid_Y.Kp = 12;
+				pid_X.Kd = 9.5;
+				pid_Y.Kd = 9.5;
 				success = 0;
 			}
 		
@@ -320,7 +211,7 @@ int main(void)
 			else 
 			{
 				close_counter = 0;
-				pid_X.Kp = 10;
+				pid_X.Kp = 12;
 				pid_Y.Kp = 10;
 				pid_X.Kd = 180;
 				pid_Y.Kd = 180;
