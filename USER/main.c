@@ -42,8 +42,8 @@ int aim_routine[5][9] = {	{0},
 							{buffer_1_index, buffer_2_index, buffer_4_index, AIM_9_index, A_Task_Finish}						//任务四
 										
 						};     //对应编号 - 1
-int Task_index = TASK_4_index;
-int *aim_index = aim_routine[TASK_4_index];
+int Task_index = TASK_3_index;
+int *aim_index = aim_routine[TASK_3_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -82,9 +82,12 @@ int main(void)
 		
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 15, 0, 170); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 15, 0, 170);
+	pid_init(&pid_X, 15, 0.5, 170); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 15, 0.5, 170);
 	TIM3_init(1); //计算帧数中断
+	
+	
+	
 	
 	while(1)
 	{
@@ -158,10 +161,10 @@ int main(void)
 				close_counter ++;
 				if(close_counter > 10)
 				{	
-					pid_X.Kp = 0.5;
-					pid_Y.Kp = 0.5;
-					pid_X.Kd = 2;
-					pid_Y.Kd = 2;
+//					pid_X.Kp = Aim[*aim_index].PID_p_x;
+//					pid_Y.Kp = Aim[*aim_index].PID_p_y;
+//					pid_X.Kd = Aim[*aim_index].PID_d_x;
+//					pid_Y.Kd = Aim[*aim_index].PID_d_y;
 ////				}
 					//成功
 					if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
@@ -186,6 +189,9 @@ int main(void)
 								aim_index = aim_routine[Task_index];
 							}
 							close_counter = 0;
+							pid_X.E_sum = 0;
+							pid_Y.E_sum = 0;
+							success = 0;
 						}
 						
 					}
@@ -199,13 +205,14 @@ int main(void)
 			close_counter ++;
 			if(close_counter >= 20)
 			{
-				pid_X.Kp = 13;
-				pid_Y.Kp = 12;
-				pid_X.Kd = 9.5;
-				pid_Y.Kd = 9.5;
+				pid_X.Kp = Aim[*aim_index].PID_p_x;
+				pid_Y.Kp = Aim[*aim_index].PID_p_y;
+				pid_X.Kd = Aim[*aim_index].PID_d_x;
+				pid_Y.Kd = Aim[*aim_index].PID_d_y;
 				success = 0;
 			}
-		
+//			pid_X.E_sum = 0;
+//			pid_Y.E_sum = 0;
 		}
 		//远离
 			else 
@@ -213,10 +220,11 @@ int main(void)
 				close_counter = 0;
 				pid_X.Kp = 12;
 				pid_Y.Kp = 10;
-				pid_X.Kd = 180;
-				pid_Y.Kd = 180;
+				pid_X.Kd = 170;
+				pid_Y.Kd = 170;
 				success = 0;
-				
+				pid_X.E_sum = 0;
+				pid_Y.E_sum = 0;
 //				ball_static++;
 //				if(ball_static > 40)
 //				{
@@ -278,10 +286,10 @@ void pid_calculate(void)
 //					pid_X.E_sum = pid_Y.E_sum = 0;
 //					
 //				}
-//				pid_X.E_sum += pid_X.E_now;  //KI
-//				pid_Y.E_sum += pid_Y.E_now;
-//				pid_X.Iout = pid_X.Ki * pid_X.E_sum ;
-//				pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;
+				pid_X.E_sum += pid_X.E_now;  //KI
+				pid_Y.E_sum += pid_Y.E_now;
+				pid_X.Iout = pid_X.Ki * pid_X.E_sum;
+				pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;
 //			}
 //			else 
 //			{
@@ -297,8 +305,43 @@ void pid_calculate(void)
 			
 			if(have_ball == 1)
 			{
-				PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
-				PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+				
+				if((pid_X.Pout + pid_X.Iout + pid_X.Dout) <= 10 &&\
+					(pid_X.Pout + pid_X.Iout + pid_X.Dout) >= 0)
+				{
+					PWM_X = PWM_init_X[*aim_index] + 10;
+				}
+				else if((pid_X.Pout + pid_X.Iout + pid_X.Dout) >= -10 &&\
+						(pid_X.Pout + pid_X.Iout + pid_X.Dout) <= 0)
+				{
+					PWM_X = PWM_init_X[*aim_index] - 10;
+				
+				}
+				else 
+				{
+					PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
+				}
+				//PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout; 
+				//
+				if((pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) <= 10 &&\
+					(pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) >= 0)
+				{
+					PWM_Y = PWM_init_Y[*aim_index] + 10;
+				}
+				else if((pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) >= -10 &&\
+						(pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) <= 0)
+				{
+					PWM_Y = PWM_init_Y[*aim_index] - 10;
+				
+				}
+				else 
+				{
+					PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;  
+				}
+				//PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+					//PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+				
+				
 				
 			}
 			
@@ -306,6 +349,8 @@ void pid_calculate(void)
 			{
 				PWM_X = PWM_init_X[*aim_index];  
 				PWM_Y = PWM_init_Y[*aim_index];
+				pid_X.E_sum = 0;
+				pid_Y.E_sum = 0;
 			}    
 			have_ball = 0;	
 			

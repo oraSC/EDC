@@ -8,81 +8,25 @@ Project File Date:  05/08/2019
 
 <h2>Output:</h2>
 Build target 'EDC'
+compiling main.c...
+main.c(384): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                        LCD_ShowString(10, 220 , 240, 16, 16, str1);
+main.c(385): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                        LCD_ShowString(10, 250 , 240, 16, 16, str2);
+main.c(389): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                        LCD_ShowString(10, 270 , 240, 16, 16, str3);
+main.c(390): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                        LCD_ShowString(10, 300 , 240, 16, 16, str4);
+main.c(259): warning:  #177-D: variable "I_count" was declared but never referenced
+        static u8 I_count = 0;
+main.c(264): warning:  #177-D: variable "str5" was declared but never referenced
+        char str5[30] = {0};
+main.c(434): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 20 , 100, 16, 16, frame);
+main.c: 7 warnings, 0 errors
+compiling motor.c...
+compiling init.c...
 linking...
-Program Size: Code=44556 RO-data=8212 RW-data=296 ZI-data=60704  
-FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 0 Warning(s).
-r(s), 0 Warning(s).
-Load "..\\OBJ\\Template.axf" 
-Set JLink Project File to "H:\Electronics_design_contest\code\EDC\USER\JLinkSettings.ini"
-* JLink Info: Device "STM32F407ZG" selected (1024 KB flash, 128 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.80g, compiled Feb 13 2014 20:50:02
-Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
-Hardware: V7.00
-S/N : 20090928 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
- 
-* JLink Info: Found SWD-DP with ID 0x2BA01477
-* JLink Info: Found SWD-DP with ID 0x2BA01477
-* JLink Info: Found Cortex-M4 r0p1, Little endian.
-* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
-* JLink Info: TPIU fitted.
-* JLink Info: ETM fitted.
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: STM32F407ZG
-VTarget = 3.300V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 1, TMS: 0, TRES: 1, TRST: 1
-Hardware-Breakpoints: 6
-Software-Breakpoints: 8192
-Watchpoints:          4
-JTAG speed: 2000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-ta=296 ZI-data=60704  
+Program Size: Code=45264 RO-data=8212 RW-data=296 ZI-data=61024  
 FromELF: creating hex file...
 "..\OBJ\Template.axf" - 0 Error(s), 7 Warning(s).
-Load "..\\OBJ\\Template.axf" 
-Set JLink Project File to "H:\Electronics_design_contest\code\EDC\USER\JLinkSettings.ini"
-* JLink Info: Device "STM32F407ZG" selected (1024 KB flash, 128 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.80g, compiled Feb 13 2014 20:50:02
-Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
-Hardware: V7.00
-S/N : 20090928 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
- 
-* JLink Info: Found SWD-DP with ID 0x2BA01477
-* JLink Info: Found SWD-DP with ID 0x2BA01477
-* JLink Info: Found Cortex-M4 r0p1, Little endian.
-* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
-* JLink Info: TPIU fitted.
-* JLink Info: ETM fitted.
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: STM32F407ZG
-VTarget = 3.300V
-State of Pins: 
-TCK: 0, TDI: 0, TDO: 1, TMS: 0, TRES: 1, TRST: 1
-Hardware-Breakpoints: 6
-Software-Breakpoints: 8192
-Watchpoints:          4
-JTAG speed: 2000 kHz
- 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...

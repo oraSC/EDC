@@ -14,6 +14,11 @@ typedef struct {
 	//Ô¶Àë·¶Î§
 	int far_distance;
 	
+	//pid²ÎÊı
+	float PID_p_x;
+	float PID_p_y;
+	float PID_d_x;
+	float PID_d_y;
 
 }aim_t;
 

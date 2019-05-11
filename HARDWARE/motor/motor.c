@@ -62,4 +62,23 @@ void motor_init(u32 Fre)
 	
 }
 
+void set_angle(float x_angle, float y_angle)
+{
+	//计算脉冲
+	int PWM_x;
+	int PWM_y;
+	
+	
+	
+	PWM_x = x_angle / 180 * 2000 + 500;
+	PWM_y = y_angle / 180 * 2000 + 500;
+	
+	TIM_SetCompare1(TIM4,PWM_x);	//修改比较值，修改占空比      输出pid计算值
+	TIM_SetCompare2(TIM4,PWM_y);	//修改比较值，修改占空比
+	
+}
+
+
+
+
 

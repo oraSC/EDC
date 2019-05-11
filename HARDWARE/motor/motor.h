@@ -14,7 +14,7 @@
 *	void
 */
 void motor_init(u32 Fre);
-
+void set_angle(float x_angle, float y_angle);
 
 
 #endif
