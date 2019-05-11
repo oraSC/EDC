@@ -9,10 +9,9 @@ typedef struct {
 	//³É¹¦·¶Î§
 	int success_distance;
 	//¿¿½ü·¶Î§
-	int close_distance;
 	int middle_distance;
-	//Ô¶Àë·¶Î§
-	int far_distance;
+//	//Ô¶Àë·¶Î§
+//	int far_distance;
 	
 	//pid²ÎÊı
 	float PID_p_x;

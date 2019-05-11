@@ -19,22 +19,20 @@ void sys_init(void)
 	//Aim x 、 y 、distance
 	Aim[AIM_1_index].X = 12;
 	Aim[AIM_1_index].Y = 28;
-	Aim[AIM_1_index].success_distance = 2;
-	Aim[AIM_1_index].close_distance = 4;
+	Aim[AIM_1_index].success_distance = 3;
 	Aim[AIM_1_index].middle_distance = 10;
 //	Aim[AIM_1_index].far_distance;
 	
-	Aim[AIM_2_index].X = 62;
-	Aim[AIM_2_index].Y = 25;
+	Aim[AIM_2_index].X = 72;
+	Aim[AIM_2_index].Y = 33;
 	
 	Aim[AIM_3_index].X = 114;
 	Aim[AIM_3_index].Y = 24;
 	
 	Aim[AIM_4_index].X = 22;
 	Aim[AIM_4_index].Y = 96;
-	Aim[AIM_4_index].success_distance = 2;
-	Aim[AIM_4_index].close_distance = 4;
-	Aim[AIM_4_index].middle_distance = 5;
+	Aim[AIM_4_index].success_distance = 3;
+	Aim[AIM_4_index].middle_distance = 4;
 	Aim[AIM_4_index].PID_p_x = 0.05;
 	Aim[AIM_4_index].PID_p_y = 0.05;
 	Aim[AIM_4_index].PID_d_x = 20;
@@ -42,9 +40,8 @@ void sys_init(void)
 	
 	Aim[AIM_5_index].X = 70;
 	Aim[AIM_5_index].Y = 96;
-	Aim[AIM_5_index].success_distance = 2;
-	Aim[AIM_5_index].close_distance = 2;
-	Aim[AIM_5_index].middle_distance = 3;
+	Aim[AIM_5_index].success_distance = 3;
+	Aim[AIM_5_index].middle_distance = 4;
 	Aim[AIM_5_index].PID_p_x = 0.05;
 	Aim[AIM_5_index].PID_p_y = 0.05;
 	Aim[AIM_5_index].PID_d_x = 20;
@@ -60,52 +57,69 @@ void sys_init(void)
 	Aim[AIM_9_index].X = 118;
 	Aim[AIM_9_index].Y = 162;
 	Aim[AIM_9_index].success_distance = 2;
-	Aim[AIM_9_index].close_distance = 4;
 	Aim[AIM_9_index].middle_distance = 10;
+	Aim[AIM_9_index].PID_p_x = 0.05;
+	Aim[AIM_9_index].PID_p_y = 0.05;
+	Aim[AIM_9_index].PID_d_x = 20;
+	Aim[AIM_9_index].PID_d_y = 20;
 	
 	//buffer x , y
-	Aim[buffer_1_index].X = 45;
-	Aim[buffer_1_index].Y = 63;
-	Aim[buffer_1_index].success_distance = 20;
-	Aim[buffer_1_index].close_distance = 20;
-	Aim[buffer_1_index].middle_distance = 20;
+	Aim[buffer_1_index].X = 46;
+	Aim[buffer_1_index].Y = 61;
+	Aim[buffer_1_index].success_distance = 30;
+	Aim[buffer_1_index].middle_distance = 10;
+	Aim[buffer_1_index].PID_p_x = 0.05;
+	Aim[buffer_1_index].PID_p_y = 0.05;
+	Aim[buffer_1_index].PID_d_x = 20;
+	Aim[buffer_1_index].PID_d_y = 20;
 	
-	Aim[buffer_2_index].X = 96;
-	Aim[buffer_2_index].Y = 62;
-	Aim[buffer_2_index].success_distance = 20;
-	Aim[buffer_2_index].close_distance = 20;
-	Aim[buffer_2_index].middle_distance = 20;
+	Aim[buffer_2_index].X = 95;
+	Aim[buffer_2_index].Y = 59;
+	Aim[buffer_2_index].success_distance = 30;
+	Aim[buffer_2_index].middle_distance = 10;
+	Aim[buffer_2_index].PID_p_x = 0.05;
+	Aim[buffer_2_index].PID_p_y = 0.05;
+	Aim[buffer_2_index].PID_d_x = 20;
+	Aim[buffer_2_index].PID_d_y = 20;
 	
-	Aim[buffer_3_index].X = 46;
+	Aim[buffer_3_index].X = 47;
 	Aim[buffer_3_index].Y = 128;
-	Aim[buffer_3_index].success_distance = 20;
-	Aim[buffer_3_index].close_distance = 20;
-	Aim[buffer_3_index].middle_distance = 20;
+	Aim[buffer_3_index].success_distance = 30;
+	Aim[buffer_3_index].middle_distance = 10;
+	Aim[buffer_3_index].PID_p_x = 0.05;
+	Aim[buffer_3_index].PID_p_y = 0.05;
+	Aim[buffer_3_index].PID_d_x = 20;
+	Aim[buffer_3_index].PID_d_y = 20;
 	
 	Aim[buffer_4_index].X = 96;
 	Aim[buffer_4_index].Y = 128;
-	Aim[buffer_4_index].success_distance = 10;
-	Aim[buffer_4_index].close_distance = 10;
+	Aim[buffer_4_index].success_distance = 30;
 	Aim[buffer_4_index].middle_distance = 10;
+	Aim[buffer_4_index].PID_p_x = 0.05;
+	Aim[buffer_4_index].PID_p_y = 0.05;
+	Aim[buffer_4_index].PID_d_x = 20;
+	Aim[buffer_4_index].PID_d_y = 20;
 	
 
 	//初始值
+	PWM_init_X[AIM_2_index] = 65;
+	PWM_init_Y[AIM_2_index] = 70;
 	PWM_init_X[AIM_4_index] = 70;
-	PWM_init_Y[AIM_4_index] = 60;
-	PWM_init_X[AIM_5_index] = 55;
+	PWM_init_Y[AIM_4_index] = 55;
+	PWM_init_X[AIM_5_index] = 53;
 	PWM_init_Y[AIM_5_index] = 55;
-	PWM_init_X[AIM_8_index] = 1200;
-	PWM_init_Y[AIM_8_index] = 1000;
-	PWM_init_X[AIM_9_index] = 1000;
-	PWM_init_Y[AIM_9_index] = 1000;
-	PWM_init_X[buffer_1_index] = 1100;
-	PWM_init_Y[buffer_1_index] = 1100;
-	PWM_init_X[buffer_2_index] = 1100;
-	PWM_init_Y[buffer_2_index] = 1100;
-	PWM_init_X[buffer_3_index] = 1100;
-	PWM_init_Y[buffer_3_index] = 1100;
-	PWM_init_X[buffer_4_index] = 1100;
-	PWM_init_Y[buffer_4_index] = 1100;
+	PWM_init_X[AIM_8_index] = 70;
+	PWM_init_Y[AIM_8_index] = 70;
+	PWM_init_X[AIM_9_index] = 70;
+	PWM_init_Y[AIM_9_index] = 70;
+	PWM_init_X[buffer_1_index] = 50;
+	PWM_init_Y[buffer_1_index] = 50;
+	PWM_init_X[buffer_2_index] = 50;
+	PWM_init_Y[buffer_2_index] = 70;
+	PWM_init_X[buffer_3_index] = 70;
+	PWM_init_Y[buffer_3_index] = 70;
+	PWM_init_X[buffer_4_index] = 70;
+	PWM_init_Y[buffer_4_index] = 70;
 
 			//外设初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2

@@ -42,8 +42,8 @@ int aim_routine[5][9] = {	{0},
 							{buffer_1_index, buffer_2_index, buffer_4_index, AIM_9_index, A_Task_Finish}						//任务四
 										
 						};     //对应编号 - 1
-int Task_index = TASK_2_index;
-int *aim_index = aim_routine[TASK_2_index];
+int Task_index = TASK_4_index;
+int *aim_index = aim_routine[TASK_4_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -54,13 +54,9 @@ pid_t pid_Y;
 float PWM_X = 0;
 float PWM_Y = 0;
 u8 ov_frame_flag;  						//帧率
-u32 ball_static = 0;
-char Enable_I_flag = 0;
-
 void pid_calculate(void);
-
 int ov_frame = 0;
-int close_counter = 0;
+
 
 int main(void)
 {
@@ -150,113 +146,77 @@ int main(void)
 		}
 			pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
 			pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
-			//??
-		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].close_distance \
-			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].close_distance)
+			
+		if(displayMode == BinaryZation)
 		{
-//				close_counter ++;
-//				if(close_counter > 10)
-//				{	
-////					pid_X.Kp = Aim[*aim_index].PID_p_x;
-////					pid_Y.Kp = Aim[*aim_index].PID_p_y;
-////					pid_X.Kd = Aim[*aim_index].PID_d_x;
-////					pid_Y.Kd = Aim[*aim_index].PID_d_y;
-//////				}
-//					//??
-			if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
-				&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
+		//成功
+		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
+			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
+		{
+			success++;
+			if(success >= 5)
 			{
-				success++;
-				if(success >= 10)
+				if(*aim_index < 10)
 				{
 					pid_X.Kp = 0;
 					pid_Y.Kp = 0;
 					pid_X.Kd = 0;
 					pid_Y.Kd = 0;
 				}
-				if(success >= 70)
-				{
-					
-					aim_index++;
-					if(*aim_index == A_Task_Finish)
-					{
-						//???????
-						Task_index++;
-						aim_index = aim_routine[Task_index];
-					}
-					close_counter = 0;
-					pid_X.E_sum = 0;
-					pid_Y.E_sum = 0;
-					success = 0;
-				}
-				
 			}
-//				}
+			if(success >= 70)
+			{
+				
+				aim_index++;
+				if(*aim_index == A_Task_Finish)
+				{
+					//指向下一个任务
+					Task_index++;
+					aim_index = aim_routine[Task_index];
+					displayMode = RGB;
+				}
 
+				pid_X.E_sum = 0;
+				pid_Y.E_sum = 0;
+				success = 0;
+			}
+			
 		}
-		//???
+
+		//靠近
 		else if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].middle_distance \
 			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].middle_distance)
 		{
-//			close_counter ++;
-//			if(close_counter >= 40)
-//			{
-				pid_X.Kp = Aim[*aim_index].PID_p_x;
-				pid_Y.Kp = Aim[*aim_index].PID_p_y;
-				pid_X.Kd = Aim[*aim_index].PID_d_x;
-				pid_Y.Kd = Aim[*aim_index].PID_d_y;
-				
-//			}
-//			if(close_counter >= 80)
-//			{
-//				close_counter = 80;
-//			
-//			}
+
+			pid_X.Kp = Aim[*aim_index].PID_p_x;
+			pid_Y.Kp = Aim[*aim_index].PID_p_y;
+			pid_X.Kd = Aim[*aim_index].PID_d_x;
+			pid_Y.Kd = Aim[*aim_index].PID_d_y;
+
 			success = 0;
-//			pid_X.E_sum = 0;
-//			pid_Y.E_sum = 0;
+
 		}
-		//??
+		//远离
 			else 
 			{
-//				close_counter--;
-//				if(close_counter < 40)
-//				{
-					pid_X.Kp = 2.0;
-					pid_Y.Kp = 2.0;
-					pid_X.Kd = 30;
-					pid_Y.Kd = 30;
-//				}
-//				if(close_counter <= 0)
-//				{
-//					close_counter = 0;
-//				}
-				close_counter = 0;
+
+				pid_X.Kp = 2.0;
+				pid_Y.Kp = 2.0;
+				pid_X.Kd = 30;
+				pid_Y.Kd = 30;
+
 				success = 0;
 				pid_X.E_sum = 0;
 				pid_Y.E_sum = 0;
-//				ball_static++;
-//				if(ball_static > 40)
-//				{
-//					Enable_I_flag = ENABLE_I;
-//				}
+
 			}
 		
-
-////			{
-////				ball_static = 0;
-////				success = 0;
-////				pid_X.ball_last_center_X = pid_X.ball_center_X;
-////				pid_Y.ball_last_center_Y = pid_Y.ball_center_Y;
-////			}
-		
+		}
 			pid_X.ball_max_X = 0;
 			pid_X.ball_min_X = 160;
 			pid_Y.ball_max_Y = 0;
 			pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
 				
-		
-		
 			//pid计算
 			pid_calculate();
 			ov_frame++;
@@ -338,7 +298,7 @@ void pid_calculate(void)
 //			PWM_Y = PWM_init_Y[*aim_index];
 			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
 			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
-			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);
+			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki);
 			sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
 			//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
 
