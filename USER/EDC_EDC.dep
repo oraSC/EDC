@@ -1,5 +1,5 @@
 Dependencies for Project 'EDC', Target 'EDC': (DO NOT MODIFY !)
-F (.\main.c)(0x5CD67063)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x5CD6C068)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (stm32f4xx.h)(0x5710F354)
 I (..\CORE\core_cm4.h)(0x5710F350)
 I (D:\win10\app\keil5\set_up_path\ARM\ARMCC\include\stdint.h)(0x53463A44)
@@ -724,7 +724,7 @@ I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x5710F350)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x5710F350)
 I (..\SYSTEM\usart\usart.h)(0x5710F354)
 I (D:\win10\app\keil5\set_up_path\ARM\ARMCC\include\stdio.h)(0x53463A44)
-F (..\HARDWARE\motor\motor.c)(0x5CD67063)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
+F (..\HARDWARE\motor\motor.c)(0x5CD6744F)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
 I (..\HARDWARE\motor\motor.h)(0x5CD67063)
 I (..\USER\stm32f4xx.h)(0x5710F354)
 I (..\CORE\core_cm4.h)(0x5710F350)
@@ -961,7 +961,7 @@ I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x5710F350)
 I (..\SYSTEM\usart\usart.h)(0x5710F354)
 I (D:\win10\app\keil5\set_up_path\ARM\ARMCC\include\stdio.h)(0x53463A44)
 I (..\SYSTEM\sys\sys.h)(0x5710F353)
-F (..\HARDWARE\usart3\usart3.c)(0x5CD14006)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\usart3.o --omf_browse ..\obj\usart3.crf --depend ..\obj\usart3.d)
+F (..\HARDWARE\usart3\usart3.c)(0x5CD6731A)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\usart3.o --omf_browse ..\obj\usart3.crf --depend ..\obj\usart3.d)
 I (..\SYSTEM\sys\sys.h)(0x5710F353)
 I (..\USER\stm32f4xx.h)(0x5710F354)
 I (..\CORE\core_cm4.h)(0x5710F350)
@@ -1001,7 +1001,8 @@ I (..\HARDWARE\usart3\usart3.h)(0x5CBC51AA)
 I (D:\win10\app\keil5\set_up_path\ARM\ARMCC\include\stdio.h)(0x53463A44)
 I (..\HARDWARE\PID\pid.h)(0x5CC6F04C)
 I (D:\win10\app\keil5\set_up_path\ARM\ARMCC\include\string.h)(0x53463A44)
-F (..\HARDWARE\init\init.c)(0x5CD43804)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\init.o --omf_browse ..\obj\init.crf --depend ..\obj\init.d)
+I (..\HARDWARE\motor\motor.h)(0x5CD67063)
+F (..\HARDWARE\init\init.c)(0x5CD6C34C)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\FWLIB\inc -I..\HARDWARE\motor -I..\HARDWARE\lcd -I..\HARDWARE\DCMI -I..\HARDWARE\OV2640 -I..\HARDWARE\PID -I..\HARDWARE\usart3 -I..\HARDWARE\init-I D:\win10\app\keil5\set_up_path\ARM\RV31\INC-I D:\win10\app\keil5\set_up_path\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include-I D:\win10\app\keil5\set_up_path\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DSVGA-o ..\obj\init.o --omf_browse ..\obj\init.crf --depend ..\obj\init.d)
 I (..\HARDWARE\init\init.h)(0x5CD3BCBA)
 I (..\USER\stm32f4xx.h)(0x5710F354)
 I (..\CORE\core_cm4.h)(0x5710F350)

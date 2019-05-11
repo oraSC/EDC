@@ -42,8 +42,8 @@ int aim_routine[5][9] = {	{0},
 							{buffer_1_index, buffer_2_index, buffer_4_index, AIM_9_index, A_Task_Finish}						//任务四
 										
 						};     //对应编号 - 1
-int Task_index = TASK_3_index;
-int *aim_index = aim_routine[TASK_3_index];
+int Task_index = TASK_2_index;
+int *aim_index = aim_routine[TASK_2_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -51,8 +51,8 @@ pid_t pid_X;
 pid_t pid_Y;
 
 
-int PWM_X = 0;
-int PWM_Y = 0;
+float PWM_X = 0;
+float PWM_Y = 0;
 u8 ov_frame_flag;  						//帧率
 u32 ball_static = 0;
 char Enable_I_flag = 0;
@@ -77,18 +77,18 @@ int main(void)
 
 	/*************************************舵机**************************************/
 	motor_init(50);			//50HZ -> 20ms
-	TIM_SetCompare1(TIM4, 1100);	//修改比较值，修改占空比      输出pid计算值
-	TIM_SetCompare2(TIM4, 1100);	//修改比较值，修改占空比
-		
+//	TIM_SetCompare1(TIM4, 1100);	//修改比较值，修改占空比      输出pid计算值
+//	TIM_SetCompare2(TIM4, 1100);	//修改比较值，修改占空比
+	set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 15, 0.5, 170); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 15, 0.5, 170);
+	pid_init(&pid_X, 3, 0.01, 10); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 3, 0.01, 10);
 	TIM3_init(1); //计算帧数中断
 	
 	
 	
-	
+
 	while(1)
 	{
 		//等待新的一帧
@@ -150,78 +150,88 @@ int main(void)
 		}
 			pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
 			pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
-			
-			
-		
-
-		//靠近
+			//??
 		if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].close_distance \
 			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].close_distance)
 		{
-				close_counter ++;
-				if(close_counter > 10)
-				{	
-//					pid_X.Kp = Aim[*aim_index].PID_p_x;
-//					pid_Y.Kp = Aim[*aim_index].PID_p_y;
-//					pid_X.Kd = Aim[*aim_index].PID_d_x;
-//					pid_Y.Kd = Aim[*aim_index].PID_d_y;
-////				}
-					//成功
-					if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
-						&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
-					{
-						success++;
-						if(success >= 10)
-						{
-							pid_X.Kp = 0;
-							pid_Y.Kp = 0;
-							pid_X.Kd = 0;
-							pid_Y.Kd = 0;
-						}
-						if(success >= 70)
-						{
-							
-							aim_index++;
-							if(*aim_index == A_Task_Finish)
-							{
-								//转向另一个任务
-								Task_index++;
-								aim_index = aim_routine[Task_index];
-							}
-							close_counter = 0;
-							pid_X.E_sum = 0;
-							pid_Y.E_sum = 0;
-							success = 0;
-						}
-						
-					}
+//				close_counter ++;
+//				if(close_counter > 10)
+//				{	
+////					pid_X.Kp = Aim[*aim_index].PID_p_x;
+////					pid_Y.Kp = Aim[*aim_index].PID_p_y;
+////					pid_X.Kd = Aim[*aim_index].PID_d_x;
+////					pid_Y.Kd = Aim[*aim_index].PID_d_y;
+//////				}
+//					//??
+			if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].success_distance \
+				&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
+			{
+				success++;
+				if(success >= 10)
+				{
+					pid_X.Kp = 0;
+					pid_Y.Kp = 0;
+					pid_X.Kd = 0;
+					pid_Y.Kd = 0;
 				}
+				if(success >= 70)
+				{
+					
+					aim_index++;
+					if(*aim_index == A_Task_Finish)
+					{
+						//???????
+						Task_index++;
+						aim_index = aim_routine[Task_index];
+					}
+					close_counter = 0;
+					pid_X.E_sum = 0;
+					pid_Y.E_sum = 0;
+					success = 0;
+				}
+				
+			}
+//				}
 
 		}
-		//中距离
+		//???
 		else if(abs(pid_X.ball_center_X - Aim[*aim_index].X) <= Aim[*aim_index].middle_distance \
 			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].middle_distance)
 		{
-			close_counter ++;
-			if(close_counter >= 20)
-			{
+//			close_counter ++;
+//			if(close_counter >= 40)
+//			{
 				pid_X.Kp = Aim[*aim_index].PID_p_x;
 				pid_Y.Kp = Aim[*aim_index].PID_p_y;
 				pid_X.Kd = Aim[*aim_index].PID_d_x;
 				pid_Y.Kd = Aim[*aim_index].PID_d_y;
-				success = 0;
-			}
+				
+//			}
+//			if(close_counter >= 80)
+//			{
+//				close_counter = 80;
+//			
+//			}
+			success = 0;
 //			pid_X.E_sum = 0;
 //			pid_Y.E_sum = 0;
 		}
-		//远离
+		//??
 			else 
 			{
+//				close_counter--;
+//				if(close_counter < 40)
+//				{
+					pid_X.Kp = 2.0;
+					pid_Y.Kp = 2.0;
+					pid_X.Kd = 30;
+					pid_Y.Kd = 30;
+//				}
+//				if(close_counter <= 0)
+//				{
+//					close_counter = 0;
+//				}
 				close_counter = 0;
-				pid_X.Kp = 12;
-				pid_Y.Kp = 10;
-				pid_X.Kd = 170;
-				pid_Y.Kd = 170;
 				success = 0;
 				pid_X.E_sum = 0;
 				pid_Y.E_sum = 0;
@@ -246,6 +256,7 @@ int main(void)
 			pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
 				
 		
+		
 			//pid计算
 			pid_calculate();
 			ov_frame++;
@@ -264,7 +275,6 @@ void pid_calculate(void)
 	char str5[30] = {0};
 	
 	
-	//if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
 	{
 		if(displayMode == BinaryZation)
 		{
@@ -276,28 +286,10 @@ void pid_calculate(void)
 			pid_X.Pout = pid_X.Kp * pid_X.E_now;
 			pid_Y.Pout = pid_Y.Kp * pid_Y.E_now;
 			
-//			if(Enable_I_flag == ENABLE_I)
-//			{
-//				I_count++;
-//				if(I_count >= 40)
-//				{
-//					I_count = 0;
-//					Enable_I_flag = DISABLE_I;
-//					pid_X.E_sum = pid_Y.E_sum = 0;
-//					
-//				}
-				pid_X.E_sum += pid_X.E_now;  //KI
-				pid_Y.E_sum += pid_Y.E_now;
-				pid_X.Iout = pid_X.Ki * pid_X.E_sum;
-				pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;
-//			}
-//			else 
-//			{
-//				pid_X.Iout = 0;
-//				pid_Y.Iout = 0;
-//			}
-			
-			
+			pid_X.Iout = pid_X.Ki * pid_X.E_sum;
+			pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;	
+			pid_X.E_sum += pid_X.E_now;
+			pid_Y.E_sum += pid_Y.E_now;
 			
 			//判断已经完成刹车
 			pid_X.Dout = pid_X.Kd * (pid_X.E_now - pid_X.E_last);
@@ -306,43 +298,16 @@ void pid_calculate(void)
 			if(have_ball == 1)
 			{
 				
-				if((pid_X.Pout + pid_X.Iout + pid_X.Dout) <= 10 &&\
-					(pid_X.Pout + pid_X.Iout + pid_X.Dout) >= 0)
-				{
-					PWM_X = PWM_init_X[*aim_index] + 10;
-				}
-				else if((pid_X.Pout + pid_X.Iout + pid_X.Dout) >= -10 &&\
-						(pid_X.Pout + pid_X.Iout + pid_X.Dout) <= 0)
-				{
-					PWM_X = PWM_init_X[*aim_index] - 10;
+				PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout; 
+				PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
 				
-				}
-				else 
-				{
-					PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout;  
-				}
-				//PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout; 
-				//
-				if((pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) <= 10 &&\
-					(pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) >= 0)
-				{
-					PWM_Y = PWM_init_Y[*aim_index] + 10;
-				}
-				else if((pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) >= -10 &&\
-						(pid_Y.Pout + pid_Y.Iout + pid_Y.Dout) <= 0)
-				{
-					PWM_Y = PWM_init_Y[*aim_index] - 10;
-				
-				}
-				else 
-				{
-					PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;  
-				}
-				//PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
-					//PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
+				if(PWM_X < 0) PWM_X = 1;
+				else if(PWM_X > 150) PWM_X = 90;
+				if(PWM_Y < 0) PWM_Y = 1;
+				else if(PWM_Y > 150) PWM_Y = 90;
 				
 				
-				
+				set_angle(PWM_X, PWM_Y);
 			}
 			
 			else
@@ -351,27 +316,26 @@ void pid_calculate(void)
 				PWM_Y = PWM_init_Y[*aim_index];
 				pid_X.E_sum = 0;
 				pid_Y.E_sum = 0;
+				set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
 			}    
 			have_ball = 0;	
 			
 			pid_X.E_last = pid_X.E_now;  //KD
 			pid_Y.E_last = pid_Y.E_now;
 			
+//			if(PWM_Y > 1600)	PWM_Y = 1600;                                    //pid输出限幅度 防止抽风
+//			if(PWM_Y < 500)		PWM_Y = 500;
+//			
+//			if(PWM_X > 1600)	PWM_X=1600;
+//			if(PWM_X < 500)		PWM_X=500;
 			
-			
-			if(PWM_Y > 1600)	PWM_Y = 1600;                                    //pid输出限幅度 防止抽风
-			if(PWM_Y < 500)		PWM_Y = 500;
-			
-			if(PWM_X > 1600)	PWM_X=1600;
-			if(PWM_X < 500)		PWM_X=500;
-			
-			TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
-			TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
+//			TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
+//			TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
 		}
 		else 
 		{
-			PWM_X = PWM_init_X[*aim_index];
-			PWM_Y = PWM_init_Y[*aim_index];
+//			PWM_X = PWM_init_X[*aim_index];
+//			PWM_Y = PWM_init_Y[*aim_index];
 			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
 			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
 			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f %d", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki, Enable_I_flag);

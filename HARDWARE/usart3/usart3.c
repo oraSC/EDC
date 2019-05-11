@@ -2,7 +2,7 @@
 #include "usart3.h"	 
 #include "pid.h"
 #include "string.h"
-
+#include "motor.h"
 
 /*
 *说明：使用usart3 usart_RX -> PB11、usart_TX -> PB10
@@ -107,8 +107,8 @@ void USART3_IRQHandler(void)
 						{
 							PWM_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;
 							PWM_Y =(USART3_RX_BUF[4]-'0')*1000+(USART3_RX_BUF[5]-'0')*100+(USART3_RX_BUF[6]-'0')*10+(USART3_RX_BUF[7]-'0')*1;
-							TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
-							TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
+							
+							set_angle(PWM_X, PWM_Y);
 						}
 						
 						if(USART3_RX_BUF[0] == 'K' && USART3_RX_BUF[1]=='P') //kp

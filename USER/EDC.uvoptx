@@ -146,7 +146,7 @@
         <tPdscDbg>1</tPdscDbg>
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
-        <nTsel>6</nTsel>
+        <nTsel>12</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -157,9 +157,14 @@
         <tDlgDll></tDlgDll>
         <tDlgPa></tDlgPa>
         <tIfile></tIfile>
-        <pMon>Segger\JL2CM3.dll</pMon>
+        <pMon>BIN\CMSIS_AGDI.dll</pMon>
       </DebugOpt>
       <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>CMSIS_AGDI</Key>
+          <Name>-X"PZ CMSIS-DAP" -U0602A0002016 -O654 -S9 -C0 -P00 -N00("ARM CoreSight JTAG-DP") -D00(4BA00477) -L00(0) -N01("Unknown JTAG device") -D01(06413041) -L01(0) -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZG$Flash\STM32F4xx_1024.FLM)</Name>
+        </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
