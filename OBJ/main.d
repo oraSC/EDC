@@ -47,3 +47,4 @@
 ..\obj\main.o: ..\HARDWARE\OV2640\sccb.h
 ..\obj\main.o: ..\HARDWARE\PID\pid.h
 ..\obj\main.o: ..\HARDWARE\init\init.h
+..\obj\main.o: ..\HARDWARE\BEEP\beep.h

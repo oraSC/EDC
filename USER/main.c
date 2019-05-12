@@ -8,7 +8,7 @@
 #include "ov2640.h"	
 #include "pid.h"
 #include "init.h"
-
+#include "beep.h"
 
 
 #define Width_Start		10
@@ -36,14 +36,14 @@ int PWM_init_Y[20];
 	
 int success = 0;
 int aim_routine[5][9] = {	{0},
-							{AIM_2_index, A_Task_Finish},						//任务一
-							{AIM_5_index, A_Task_Finish},						//任务二
-							{AIM_4_index, AIM_5_index, A_Task_Finish},			//任务三
-							{buffer_1_index, buffer_2_index, buffer_4_index, AIM_9_index, A_Task_Finish}						//任务四
+							{AIM_2_index, 2, A_Task_Finish},						//任务一
+							{AIM_5_index, 2, A_Task_Finish},						//任务二
+							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
+							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, A_Task_Finish}						//任务四
 										
 						};     //对应编号 - 1
-int Task_index = TASK_4_index;
-int *aim_index = aim_routine[TASK_4_index];
+int Task_index = TASK_3_index;
+int *aim_index = aim_routine[TASK_3_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -55,9 +55,15 @@ float PWM_X = 0;
 float PWM_Y = 0;
 u8 ov_frame_flag;  						//帧率
 void pid_calculate(void);
-int ov_frame = 0;
+u8 ov_frame = 0;
 
-
+//计时变量
+char success_enable_timing = 0;
+char success_timeout = 0;				
+char success_timing = 0;
+u8 task_time = 0;
+u8 on_task = 0;	
+	
 int main(void)
 {
 
@@ -80,13 +86,18 @@ int main(void)
 	/********************************pid*********************************************/
 	pid_init(&pid_X, 3, 0.01, 10); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
 	pid_init(&pid_Y, 3, 0.01, 10);
-	TIM3_init(1); //计算帧数中断
-	
+	TIM3_init(2); //计算帧数中断
+	BEEP_Init();
 	
 	
 
 	while(1)
 	{
+		if(displayMode == BinaryZation)
+		{
+			on_task = 1;
+		}	
+		
 		//等待新的一帧
 		while(ov_frame_flag == OLD_frame);
 		ov_frame_flag = OLD_frame;
@@ -154,7 +165,7 @@ int main(void)
 			&& abs(pid_Y.ball_center_Y - Aim[*aim_index].Y) <= Aim[*aim_index].success_distance)
 		{
 			success++;
-			if(success >= 5)
+			if(success >= 7)
 			{
 				if(*aim_index < 10)
 				{
@@ -164,21 +175,54 @@ int main(void)
 					pid_Y.Kd = 0;
 				}
 			}
-			if(success >= 70)
+			if(success >= 15)
 			{
-				
-				aim_index++;
-				if(*aim_index == A_Task_Finish)
+				//目标点
+				if(*(aim_index + 1) >= 0)
 				{
-					//指向下一个任务
-					Task_index++;
-					aim_index = aim_routine[Task_index];
-					displayMode = RGB;
-				}
+					success_enable_timing = 1;
+					
+					if(success_timeout == 1)
+					{
+						aim_index += 2;
+						BEEP_ON;
+						
+						
+						if(*aim_index == A_Task_Finish)
+						{
+							//指向下一个任务
+							Task_index++;
+							aim_index = aim_routine[Task_index];
+							displayMode = RGB;
+							on_task = 0;
+							task_time = 0;
+						}
 
-				pid_X.E_sum = 0;
-				pid_Y.E_sum = 0;
-				success = 0;
+						pid_X.E_sum = 0;
+						pid_Y.E_sum = 0;
+						success = 0;
+						success_enable_timing = 0;
+						success_timeout = 0;
+						success_timing = 0;
+					}
+				
+				}
+				//缓冲点
+				else
+				{
+					aim_index += 2;
+					if(*aim_index == A_Task_Finish)
+					{
+						//指向下一个任务
+						Task_index++;
+						aim_index = aim_routine[Task_index];
+						displayMode = RGB;
+					}
+
+					pid_X.E_sum = 0;
+					pid_Y.E_sum = 0;
+					success = 0;
+				}
 			}
 			
 		}
@@ -193,7 +237,11 @@ int main(void)
 			pid_X.Kd = Aim[*aim_index].PID_d_x;
 			pid_Y.Kd = Aim[*aim_index].PID_d_y;
 
-			success = 0;
+			//重置
+			success = 0;		
+			success_enable_timing = 0;
+			success_timeout = 0;
+			success_timing = 0;
 
 		}
 		//远离
@@ -202,8 +250,8 @@ int main(void)
 
 				pid_X.Kp = 2.0;
 				pid_Y.Kp = 2.0;
-				pid_X.Kd = 30;
-				pid_Y.Kd = 30;
+				pid_X.Kd = 50;
+				pid_Y.Kd = 50;
 
 				success = 0;
 				pid_X.E_sum = 0;
@@ -296,22 +344,22 @@ void pid_calculate(void)
 		{
 //			PWM_X = PWM_init_X[*aim_index];
 //			PWM_Y = PWM_init_Y[*aim_index];
-			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
-			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
-			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki);
-			sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
-			//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
+//			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
+//			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
+//			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki);
+//			sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
+//			//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
 
-			LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
-			LCD_ShowString(10, 250 , 240, 16, 16, "                    ");
+//			LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
+//			LCD_ShowString(10, 250 , 240, 16, 16, "                    ");
 
-			LCD_ShowString(10, 220 , 240, 16, 16, str1);
-			LCD_ShowString(10, 250 , 240, 16, 16, str2);
+//			LCD_ShowString(10, 220 , 240, 16, 16, str1);
+//			LCD_ShowString(10, 250 , 240, 16, 16, str2);
 
-			LCD_ShowString(10, 270 , 240, 16, 16, "                    ");
-			LCD_ShowString(10, 300 , 240, 16, 16, "                    ");
-			LCD_ShowString(10, 270 , 240, 16, 16, str3);
-			LCD_ShowString(10, 300 , 240, 16, 16, str4);
+//			LCD_ShowString(10, 270 , 240, 16, 16, "                    ");
+//			LCD_ShowString(10, 300 , 240, 16, 16, "                    ");
+//			LCD_ShowString(10, 270 , 240, 16, 16, str3);
+//			LCD_ShowString(10, 300 , 240, 16, 16, str4);
 
 			//LCD_ShowString(30, 290 , 240, 16, 16, "                    ");
 			//LCD_ShowString(30, 290 , 240, 16, 16, str5);
@@ -347,17 +395,39 @@ void DCMI_IRQHandler(void)
 } 
 void TIM3_IRQHandler(void)
 {
-	char frame[6];
+
 	
 	
 	if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET)
 	{
+		BEEP_OFF;
 		
-		sprintf(frame, "frame: %d", ov_frame);
-		LCD_ShowString(150, 20 , 100, 16, 16, "          ");
-		LCD_ShowString(150, 20 , 100, 16, 16, frame);
+		LCD_ShowNum(150+24*4, 20 , ov_frame, 2, 24);
+		
+		if(on_task == 1)
+		{
+			task_time++;
+			LCD_ShowNum(150+24*3, 50, task_time / 2, 2, 24);
+		
+		}
 		ov_frame = 0;
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		
+		
+		
+		//成功即使
+		if(success_enable_timing == 1)
+		{
+			success_timing++;
+			if(success_timing >= *(aim_index + 1))
+			{
+				success_timeout = 1;
+			}
+		
+		}
+		
+		
+		
 	}
 
 
