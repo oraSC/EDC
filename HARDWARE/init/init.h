@@ -26,6 +26,7 @@ typedef struct {
 #define TASK_2_index	2
 #define	TASK_3_index	3
 #define TASK_4_index	4
+#define TASK_5_index	5
 
 #define A_Task_Finish	0
 #define AIM_1_index		1

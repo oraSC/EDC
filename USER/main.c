@@ -35,15 +35,16 @@ int PWM_init_X[20];
 int PWM_init_Y[20];
 	
 int success = 0;
-int aim_routine[5][9] = {	{0},
-							{AIM_2_index, 2, A_Task_Finish},						//任务一
-							{AIM_5_index, 2, A_Task_Finish},						//任务二
+int aim_routine[7][9] = {	{0},
+							{AIM_2_index, 2.5*2, A_Task_Finish},						//任务一
+							{AIM_5_index, 2.5*2, A_Task_Finish},						//任务二
 							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
-							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, A_Task_Finish}						//任务四
-										
-						};     //对应编号 - 1
-int Task_index = TASK_3_index;
-int *aim_index = aim_routine[TASK_3_index];
+							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,  A_Task_Finish},						//任务四
+							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, -1, AIM_9_index, 2.5 * 2, A_Task_Finish}			
+							
+							};     //对应编号 - 1
+int Task_index = TASK_5_index;
+int *aim_index = aim_routine[TASK_5_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -175,7 +176,7 @@ int main(void)
 					pid_Y.Kd = 0;
 				}
 			}
-			if(success >= 15)
+			if(success >= 10)
 			{
 				//目标点
 				if(*(aim_index + 1) >= 0)
@@ -283,96 +284,86 @@ void pid_calculate(void)
 	char str5[30] = {0};
 	
 	
+	
+	if(displayMode == BinaryZation)
 	{
-		if(displayMode == BinaryZation)
+		//计算偏差
+		pid_X.E_now = Aim[*aim_index].X - pid_X.ball_center_X;
+		pid_Y.E_now = Aim[*aim_index].Y - pid_Y.ball_center_Y;
+		
+		//计算各项作用
+		pid_X.Pout = pid_X.Kp * pid_X.E_now;
+		pid_Y.Pout = pid_Y.Kp * pid_Y.E_now;
+		
+		pid_X.Iout = pid_X.Ki * pid_X.E_sum;
+		pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;	
+		pid_X.E_sum += pid_X.E_now;
+		pid_Y.E_sum += pid_Y.E_now;
+		
+		//判断已经完成刹车
+		pid_X.Dout = pid_X.Kd * (pid_X.E_now - pid_X.E_last);
+		pid_Y.Dout = pid_Y.Kd * (pid_Y.E_now - pid_Y.E_last);
+		
+		if(have_ball == 1)
 		{
-			//计算偏差
-			pid_X.E_now = Aim[*aim_index].X - pid_X.ball_center_X;
-			pid_Y.E_now = Aim[*aim_index].Y - pid_Y.ball_center_Y;
 			
-			//计算各项作用
-			pid_X.Pout = pid_X.Kp * pid_X.E_now;
-			pid_Y.Pout = pid_Y.Kp * pid_Y.E_now;
+			PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout; 
+			PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
 			
-			pid_X.Iout = pid_X.Ki * pid_X.E_sum;
-			pid_Y.Iout = pid_Y.Ki * pid_Y.E_sum;	
-			pid_X.E_sum += pid_X.E_now;
-			pid_Y.E_sum += pid_Y.E_now;
+			if(PWM_X < 0) PWM_X = 1;
+			else if(PWM_X > 150) PWM_X = 100;
+			if(PWM_Y < 0) PWM_Y = 1;
+			else if(PWM_Y > 150) PWM_Y = 100;
 			
-			//判断已经完成刹车
-			pid_X.Dout = pid_X.Kd * (pid_X.E_now - pid_X.E_last);
-			pid_Y.Dout = pid_Y.Kd * (pid_Y.E_now - pid_Y.E_last);
 			
-			if(have_ball == 1)
-			{
-				
-				PWM_X = PWM_init_X[*aim_index] + pid_X.Pout + pid_X.Iout + pid_X.Dout; 
-				PWM_Y = PWM_init_Y[*aim_index] + pid_Y.Pout + pid_Y.Iout + pid_Y.Dout;
-				
-				if(PWM_X < 0) PWM_X = 1;
-				else if(PWM_X > 150) PWM_X = 90;
-				if(PWM_Y < 0) PWM_Y = 1;
-				else if(PWM_Y > 150) PWM_Y = 90;
-				
-				
-				set_angle(PWM_X, PWM_Y);
-			}
-			
-			else
-			{
-				PWM_X = PWM_init_X[*aim_index];  
-				PWM_Y = PWM_init_Y[*aim_index];
-				pid_X.E_sum = 0;
-				pid_Y.E_sum = 0;
-				set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
-			}    
-			have_ball = 0;	
-			
-			pid_X.E_last = pid_X.E_now;  //KD
-			pid_Y.E_last = pid_Y.E_now;
-			
-//			if(PWM_Y > 1600)	PWM_Y = 1600;                                    //pid输出限幅度 防止抽风
-//			if(PWM_Y < 500)		PWM_Y = 500;
-//			
-//			if(PWM_X > 1600)	PWM_X=1600;
-//			if(PWM_X < 500)		PWM_X=500;
-			
-//			TIM_SetCompare1(TIM4,PWM_X);	//修改比较值，修改占空比      输出pid计算值
-//			TIM_SetCompare2(TIM4,PWM_Y);	//修改比较值，修改占空比
-		}
-		else 
-		{
-//			PWM_X = PWM_init_X[*aim_index];
-//			PWM_Y = PWM_init_Y[*aim_index];
-//			sprintf(str1, "P_X: %d, %d,  Kp: %.2f", PWM_X, PWM_init_X[*aim_index], pid_X.Kp);
-//			sprintf(str2, "P_Y: %d, %d,  Kd: %.2f", PWM_Y, PWM_init_Y[*aim_index], pid_X.Kd);
-//			sprintf(str3, "b_X: %d A_X:%d Ki: %.2f", pid_X.ball_center_X, Aim[*aim_index].X, pid_X.Ki);
-//			sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
-//			//sprintf(str5, "Kp: %.2f  Kd: %.2f", pid_X.Kp, pid_X.Kd);
-
-//			LCD_ShowString(10, 220 , 240, 16, 16, "                    ");
-//			LCD_ShowString(10, 250 , 240, 16, 16, "                    ");
-
-//			LCD_ShowString(10, 220 , 240, 16, 16, str1);
-//			LCD_ShowString(10, 250 , 240, 16, 16, str2);
-
-//			LCD_ShowString(10, 270 , 240, 16, 16, "                    ");
-//			LCD_ShowString(10, 300 , 240, 16, 16, "                    ");
-//			LCD_ShowString(10, 270 , 240, 16, 16, str3);
-//			LCD_ShowString(10, 300 , 240, 16, 16, str4);
-
-			//LCD_ShowString(30, 290 , 240, 16, 16, "                    ");
-			//LCD_ShowString(30, 290 , 240, 16, 16, str5);
+			set_angle(PWM_X, PWM_Y);
 		}
 		
+		else
+		{
+			PWM_X = PWM_init_X[*aim_index];  
+			PWM_Y = PWM_init_Y[*aim_index];
+			pid_X.E_sum = 0;
+			pid_Y.E_sum = 0;
+			//set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
+		}    
+		have_ball = 0;	
 		
-		
-		
-		
-		
-
+		pid_X.E_last = pid_X.E_now;  //KD
+		pid_Y.E_last = pid_Y.E_now;
 		
 	}
+	else 
+	{
+		PWM_X = PWM_init_X[*aim_index];
+		PWM_Y = PWM_init_Y[*aim_index];
+		sprintf(str1, "P_X: %d, %d", PWM_X, PWM_init_X[*aim_index]);
+		sprintf(str2, "P_Y: %d, %d", PWM_Y, PWM_init_Y[*aim_index]);
+		sprintf(str3, "b_X: %d A_X:%d", pid_X.ball_center_X, Aim[*aim_index].X);
+		sprintf(str4, "b_Y: %d A_Y:%d", pid_Y.ball_center_Y, Aim[*aim_index].Y);
+		
+		LCD_ShowString(150, 80 , 240, 16, 16, "                    ");
+		LCD_ShowString(150, 110 , 240, 16, 16, "                    ");
+
+		LCD_ShowString(150, 80 , 240, 16, 16, str1);
+		LCD_ShowString(150, 110 , 240, 16, 16, str2);
+
+		LCD_ShowString(150, 140 , 240, 16, 16, "                    ");
+		LCD_ShowString(150, 170 , 240, 16, 16, "                    ");
+		LCD_ShowString(150, 140 , 240, 16, 16, str3);
+		LCD_ShowString(150, 170 , 240, 16, 16, str4);
+
+
+	}
+	
+		
+		
+		
+		
+		
+
+		
+	
 	//TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
 }

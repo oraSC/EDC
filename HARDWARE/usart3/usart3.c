@@ -75,6 +75,8 @@ u8 USART3_RX_BUF[USART3_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
 
 u16 USART3_RX_STA=0;       //接收状态标记	
 extern int displayMode;
+extern u8 on_task;
+extern u8 task_time;
 
 void USART3_IRQHandler(void)
 {
@@ -89,6 +91,8 @@ void USART3_IRQHandler(void)
 		if(Res == 'm')
 		{
 			displayMode = -displayMode;
+			
+			
 			//printf("m\n");
 		}
 		else 
@@ -103,13 +107,7 @@ void USART3_IRQHandler(void)
 					{
 						USART3_RX_STA|=0x8000;	//接收完成了 
 						
-					    if(RGB == displayMode)
-						{
-							PWM_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;
-							PWM_Y =(USART3_RX_BUF[4]-'0')*1000+(USART3_RX_BUF[5]-'0')*100+(USART3_RX_BUF[6]-'0')*10+(USART3_RX_BUF[7]-'0')*1;
-							
-							set_angle(PWM_X, PWM_Y);
-						}
+					    
 						
 						if(USART3_RX_BUF[0] == 'K' && USART3_RX_BUF[1]=='P') //kp
 						{
@@ -127,9 +125,18 @@ void USART3_IRQHandler(void)
 						else if(USART3_RX_BUF[0] == 'T')
 						{
 							//转向另一个任务
+							on_task = 0;
+							task_time = 0;
 							Task_index =  USART3_RX_BUF[1] - '0';
 							aim_index = aim_routine[Task_index];
 						
+						}
+						else if(RGB == displayMode)
+						{
+							PWM_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;
+							PWM_Y =(USART3_RX_BUF[4]-'0')*1000+(USART3_RX_BUF[5]-'0')*100+(USART3_RX_BUF[6]-'0')*10+(USART3_RX_BUF[7]-'0')*1;
+							
+							set_angle(PWM_X, PWM_Y);
 						}
 						
 						memset(USART3_RX_BUF, 0, sizeof(USART3_RX_BUF));

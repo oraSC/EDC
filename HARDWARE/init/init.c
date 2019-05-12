@@ -21,51 +21,65 @@ void sys_init(void)
 	Aim[AIM_1_index].Y = 31;
 	Aim[AIM_1_index].success_distance = 4;
 	Aim[AIM_1_index].middle_distance = 5;
-	Aim[AIM_1_index].PID_p_x = 0.05;
-	Aim[AIM_1_index].PID_p_y = 0.05;
-	Aim[AIM_1_index].PID_d_x = 20;
-	Aim[AIM_1_index].PID_d_y = 20;
+	Aim[AIM_1_index].PID_p_x = 0.01;
+	Aim[AIM_1_index].PID_p_y = 0.01;
+	Aim[AIM_1_index].PID_d_x = 13;
+	Aim[AIM_1_index].PID_d_y = 13;
 	
 	
-	Aim[AIM_2_index].X = 72;
-	Aim[AIM_2_index].Y = 33;
+	Aim[AIM_2_index].X = 71;
+	Aim[AIM_2_index].Y = 32;
+	Aim[AIM_2_index].success_distance = 4;
+	Aim[AIM_2_index].middle_distance = 5;
+	Aim[AIM_2_index].PID_p_x = 0.015;
+	Aim[AIM_2_index].PID_p_y = 0.015;
+	Aim[AIM_2_index].PID_d_x = 13;
+	Aim[AIM_2_index].PID_d_y = 13;
 	
 	Aim[AIM_3_index].X = 114;
 	Aim[AIM_3_index].Y = 24;
 	
 	Aim[AIM_4_index].X = 22;
-	Aim[AIM_4_index].Y = 96;
+	Aim[AIM_4_index].Y = 93;
 	Aim[AIM_4_index].success_distance = 4;
 	Aim[AIM_4_index].middle_distance = 6;
-	Aim[AIM_4_index].PID_p_x = 0.03;
-	Aim[AIM_4_index].PID_p_y = 0.03;
-	Aim[AIM_4_index].PID_d_x = 20;
-	Aim[AIM_4_index].PID_d_y = 20;
+	Aim[AIM_4_index].PID_p_x = 0.01;
+	Aim[AIM_4_index].PID_p_y = 0.01;
+	Aim[AIM_4_index].PID_d_x = 12;
+	Aim[AIM_4_index].PID_d_y = 12;
 	
 	Aim[AIM_5_index].X = 70;
-	Aim[AIM_5_index].Y = 96;
+	Aim[AIM_5_index].Y = 94;
 	Aim[AIM_5_index].success_distance = 4;
 	Aim[AIM_5_index].middle_distance = 6;
-	Aim[AIM_5_index].PID_p_x = 0.03;
-	Aim[AIM_5_index].PID_p_y = 0.03;
-	Aim[AIM_5_index].PID_d_x = 20;
-	Aim[AIM_5_index].PID_d_y = 20;
+	Aim[AIM_5_index].PID_p_x = 0.02;
+	Aim[AIM_5_index].PID_p_y = 0.02;
+	Aim[AIM_5_index].PID_d_x = 13;
+	Aim[AIM_5_index].PID_d_y = 13;
 	
-	Aim[AIM_6_index].X = 115;
-	Aim[AIM_6_index].Y = 90;
+	Aim[AIM_6_index].X = 119;
+	Aim[AIM_6_index].Y = 96;
+	Aim[AIM_6_index].success_distance = 4;
+	Aim[AIM_6_index].middle_distance = 6;
+	Aim[AIM_6_index].PID_p_x = 0.01;
+	Aim[AIM_6_index].PID_p_y = 0.01;
+	Aim[AIM_6_index].PID_d_x = 13;
+	Aim[AIM_6_index].PID_d_y = 13;
+	
+	
 	Aim[AIM_7_index].X = 15;
 	Aim[AIM_7_index].Y = 157;
 	Aim[AIM_8_index].X = 67;
 	Aim[AIM_8_index].Y = 164;
 	
-	Aim[AIM_9_index].X = 118;
-	Aim[AIM_9_index].Y = 162;
+	Aim[AIM_9_index].X = 117;
+	Aim[AIM_9_index].Y = 160;
 	Aim[AIM_9_index].success_distance = 2;
 	Aim[AIM_9_index].middle_distance = 10;
-	Aim[AIM_9_index].PID_p_x = 0.05;
-	Aim[AIM_9_index].PID_p_y = 0.05;
-	Aim[AIM_9_index].PID_d_x = 30;
-	Aim[AIM_9_index].PID_d_y = 30;
+	Aim[AIM_9_index].PID_p_x = 0.01;
+	Aim[AIM_9_index].PID_p_y = 0.01;
+	Aim[AIM_9_index].PID_d_x = 12;
+	Aim[AIM_9_index].PID_d_y = 12;
 	
 	//buffer x , y
 	Aim[buffer_1_index].X = 46;
@@ -108,16 +122,19 @@ void sys_init(void)
 	//≥ı º÷µ
 	PWM_init_X[AIM_1_index] = 70;
 	PWM_init_Y[AIM_1_index] = 70;
-	PWM_init_X[AIM_2_index] = 65;
-	PWM_init_Y[AIM_2_index] = 70;
+	PWM_init_X[AIM_2_index] = 50;
+	PWM_init_Y[AIM_2_index] = 72;
 	PWM_init_X[AIM_4_index] = 68;
 	PWM_init_Y[AIM_4_index] = 53;
 	PWM_init_X[AIM_5_index] = 51;
 	PWM_init_Y[AIM_5_index] = 54;
+	
+	PWM_init_X[AIM_6_index] = 30;
+	PWM_init_Y[AIM_6_index] = 54;
 	PWM_init_X[AIM_8_index] = 70;
 	PWM_init_Y[AIM_8_index] = 70;
-	PWM_init_X[AIM_9_index] = 45;
-	PWM_init_Y[AIM_9_index] = 45;
+	PWM_init_X[AIM_9_index] = 40;
+	PWM_init_Y[AIM_9_index] = 40;
 	PWM_init_X[buffer_1_index] = 50;
 	PWM_init_Y[buffer_1_index] = 50;
 	PWM_init_X[buffer_2_index] = 45;
