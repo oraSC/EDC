@@ -77,6 +77,8 @@ u16 USART3_RX_STA=0;       //接收状态标记
 extern int displayMode;
 extern u8 on_task;
 extern u8 task_time;
+extern char task_6_num;
+
 
 void USART3_IRQHandler(void)
 {
@@ -132,8 +134,23 @@ void USART3_IRQHandler(void)
 							
 							Task_index =  USART3_RX_BUF[1] - '0';
 							aim_index = aim_routine[Task_index];
+							//针对任务六，清空任务六链表
+							if(*aim_index == TASK_6_index)
+							{
+								task_6_num = 0;
+							}
+						}
+						else if(USART3_RX_BUF[0] == 'n')
+						{
+							
+							aim_routine[TASK_6_index][task_6_num] = USART3_RX_BUF[1] - '0';
+							task_6_num += 2;
+							
 						
 						}
+						
+						
+						
 						else if(RGB == displayMode)
 						{
 							PWM_X =(USART3_RX_BUF[0]-'0')*1000+(USART3_RX_BUF[1]-'0')*100+(USART3_RX_BUF[2]-'0')*10+(USART3_RX_BUF[3]-'0')*1;

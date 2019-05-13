@@ -53,6 +53,6 @@ typedef struct {
 #define WINDOW_HEIGHT	196
 
 void sys_init(void);
-
+void task_6_get_node(void);
 
 #endif

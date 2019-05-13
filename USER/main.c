@@ -36,20 +36,23 @@ int PWM_init_Y[20];
 	
 int success = 0;
 int aim_routine[TASK_num][TASK_node_num] = {	{0},
-							{AIM_2_index, 2.5*2, A_Task_Finish},						//任务一
+							{buffer_3_index, 1, AIM_7_index, 2.5*2, A_Task_Finish},						//任务一
 							{AIM_5_index, 2.5*2, A_Task_Finish},						//任务二
 							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
 							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,  A_Task_Finish},						//任务四
 							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, -1, AIM_9_index, 2.5 * 2, A_Task_Finish},			
+							{0, -1, 0, -1, 0, -1, 0, 2.5*2, A_Task_Finish},
 							{buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,A_Task_Finish}
+							
 							};     //对应编号 - 1
 int Task_index = TASK_1_index;
 int *aim_index = aim_routine[TASK_1_index];
 char have_ball = 0;
-
+char task_6_num = 0;	//记录task 6 坐标数目
+							
 //===================PID变量==============//
 pid_t pid_X;
 pid_t pid_Y;
@@ -157,6 +160,7 @@ int main(void)
 					LCD->LCD_RAM=rgb_buf[i][j];
 					pid_X.E_sum = 0;
 					pid_Y.E_sum = 0;
+					
 				}
 			}
 			
@@ -269,6 +273,33 @@ int main(void)
 					pid_Y.Kd = 30;
 				
 				}
+				else if(*aim_index == 9)
+				{
+					pid_X.Kp = 1.7;
+					pid_Y.Kp = 1.7;
+					pid_X.Kd = 70;
+					pid_Y.Kd = 70;
+				
+				
+				}
+				else if(*aim_index == 7)
+				{
+					pid_X.Kp = 0.5;
+					pid_Y.Kp = 0.5;
+					pid_X.Kd = 15;
+					pid_Y.Kd = 15;
+				
+				
+				}
+//				else if(*aim_index == 8)
+//				{
+//					pid_X.Kp = 1.7;
+//					pid_Y.Kp = 1.7;
+//					pid_X.Kd = 50;
+//					pid_Y.Kd = 50;
+//				
+//				
+//				}
 				else
 				{
 					pid_X.Kp = 1.7;
@@ -347,6 +378,7 @@ void pid_calculate(void)
 			PWM_Y = PWM_init_Y[*aim_index];
 			pid_X.E_sum = 0;
 			pid_Y.E_sum = 0;
+			set_angle(70, 70);
 			//set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
 		}    
 		have_ball = 0;	
