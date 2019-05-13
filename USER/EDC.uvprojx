@@ -364,7 +364,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,SVGA</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\HARDWARE\motor;..\HARDWARE\lcd;..\HARDWARE\DCMI;..\HARDWARE\OV2640;..\HARDWARE\PID;..\HARDWARE\usart3;..\HARDWARE\init</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\HARDWARE\motor;..\HARDWARE\lcd;..\HARDWARE\DCMI;..\HARDWARE\OV2640;..\HARDWARE\PID;..\HARDWARE\usart3;..\HARDWARE\init;..\HARDWARE\BEEP</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -571,6 +571,11 @@
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\init\init.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\BEEP\beep.c</FilePath>
             </File>
           </Files>
         </Group>

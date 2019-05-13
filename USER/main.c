@@ -35,16 +35,19 @@ int PWM_init_X[20];
 int PWM_init_Y[20];
 	
 int success = 0;
-int aim_routine[7][9] = {	{0},
+int aim_routine[TASK_num][TASK_node_num] = {	{0},
 							{AIM_2_index, 2.5*2, A_Task_Finish},						//任务一
 							{AIM_5_index, 2.5*2, A_Task_Finish},						//任务二
 							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
 							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,  A_Task_Finish},						//任务四
-							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, -1, AIM_9_index, 2.5 * 2, A_Task_Finish}			
-							
+							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, -1, AIM_9_index, 2.5 * 2, A_Task_Finish},			
+							{buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
+							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
+							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
+							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,A_Task_Finish}
 							};     //对应编号 - 1
-int Task_index = TASK_5_index;
-int *aim_index = aim_routine[TASK_5_index];
+int Task_index = TASK_1_index;
+int *aim_index = aim_routine[TASK_1_index];
 char have_ball = 0;
 
 //===================PID变量==============//
@@ -85,8 +88,8 @@ int main(void)
 	set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
 	
 	/********************************pid*********************************************/
-	pid_init(&pid_X, 3, 0.01, 10); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
-	pid_init(&pid_Y, 3, 0.01, 10);
+	pid_init(&pid_X, 3, 0.005, 10); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
+	pid_init(&pid_Y, 3, 0.005, 10);
 	TIM3_init(2); //计算帧数中断
 	BEEP_Init();
 	
@@ -152,6 +155,8 @@ int main(void)
 				if(displayMode == RGB)
 				{
 					LCD->LCD_RAM=rgb_buf[i][j];
+					pid_X.E_sum = 0;
+					pid_Y.E_sum = 0;
 				}
 			}
 			
@@ -178,6 +183,8 @@ int main(void)
 			}
 			if(success >= 10)
 			{
+				pid_X.E_sum = 0;
+				pid_Y.E_sum = 0;
 				//目标点
 				if(*(aim_index + 1) >= 0)
 				{
@@ -248,15 +255,30 @@ int main(void)
 		//远离
 			else 
 			{
+//成功至发挥一，但是速度可以较慢
+//				pid_X.Kp = 2.0;
+//				pid_Y.Kp = 2.0;
+//				pid_X.Kd = 50;
+//				pid_Y.Kd = 50;
 
-				pid_X.Kp = 2.0;
-				pid_Y.Kp = 2.0;
-				pid_X.Kd = 50;
-				pid_Y.Kd = 50;
-
+				if(*aim_index == 5)
+				{
+					pid_X.Kp = 2;
+					pid_Y.Kp = 2;
+					pid_X.Kd = 30;
+					pid_Y.Kd = 30;
+				
+				}
+				else
+				{
+					pid_X.Kp = 1.7;
+					pid_Y.Kp = 1.7;
+					pid_X.Kd = 30;
+					pid_Y.Kd = 30;
+				}
 				success = 0;
-				pid_X.E_sum = 0;
-				pid_Y.E_sum = 0;
+//				pid_X.E_sum = 0;
+//				pid_Y.E_sum = 0;
 
 			}
 		
@@ -276,12 +298,12 @@ int main(void)
 
 void pid_calculate(void)
 {
-	static u8 I_count = 0;
+
 	char str1[30] = {0};
 	char str2[30] = {0};
 	char str3[30] = {0};
 	char str4[30] = {0};
-	char str5[30] = {0};
+
 	
 	
 	

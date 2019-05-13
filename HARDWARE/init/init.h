@@ -21,12 +21,18 @@ typedef struct {
 
 }aim_t;
 
+#define TASK_num 		10
+#define TASK_node_num	50
+
 
 #define TASK_1_index	1
 #define TASK_2_index	2
 #define	TASK_3_index	3
 #define TASK_4_index	4
 #define TASK_5_index	5
+#define TASK_6_index	6
+#define TASK_7_index	7
+
 
 #define A_Task_Finish	0
 #define AIM_1_index		1

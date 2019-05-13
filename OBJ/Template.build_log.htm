@@ -4,69 +4,64 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 H:\Electronics_design_contest\code\EDC\USER\EDC.uvprojx
-Project File Date:  05/11/2019
+Project File Date:  05/12/2019
 
 <h2>Output:</h2>
 Build target 'EDC'
+compiling init.c...
 linking...
-Program Size: Code=40708 RO-data=8036 RW-data=280 ZI-data=60864  
+Program Size: Code=41700 RO-data=8036 RW-data=2100 ZI-data=60868  
 FromELF: creating hex file...
 "..\OBJ\Template.axf" - 0 Error(s), 0 Warning(s).
-r(s), 0 Warning(s).
 Load "..\\OBJ\\Template.axf" 
 Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-ariable "str2" was declared but never referenced
-        char str2[30] = {0};
-main.c(281): warning:  #177-D: variable "str3" was declared but never referenced
-        char str3[30] = {0};
-main.c(282): warning:  #177-D: variable "str4" was declared but never referenced
-        char str4[30] = {0};
-main.c(283): warning:  #177-D: variable "str5" was declared but never referenced
-        char str5[30] = {0};
+
+ing conversion
+                sprintf(str2, "P_Y: %d, %d", PWM_Y, PWM_init_Y[*aim_index]);
+main.c(370): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 80 , 240, 16, 16, str1);
+main.c(371): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 110 , 240, 16, 16, str2);
+main.c(375): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 140 , 240, 16, 16, str3);
+main.c(376): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 170 , 240, 16, 16, str4);
 main.c: 6 warnings, 0 errors
-linking...
-Program Size: Code=40680 RO-data=8036 RW-data=280 ZI-data=60864  
-FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 6 Warning(s).
-Load "..\\OBJ\\Template.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-J\\Template.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file '..\OBJ\Template.axf'
-smc.c...
-compiling stm32f4xx_gpio.c...
-compiling stm32f4xx_ltdc.c...
-compiling stm32f4xx_pwr.c...
-compiling stm32f4xx_rcc.c...
-compiling stm32f4xx_syscfg.c...
-compiling stm32f4xx_tim.c...
-compiling stm32f4xx_usart.c...
-compiling stm32f4xx_dma.c...
-compiling delay.c...
-compiling sys.c...
-compiling usart.c...
-compiling motor.c...
-compiling lcd.c...
-compiling dcmi.c...
-compiling sccb.c...
-compiling ov2640.c...
-compiling pid.c...
 compiling usart3.c...
-compiling init.c...
-compiling beep.c...
-linking...
-Program Size: Code=40684 RO-data=8036 RW-data=284 ZI-data=60868  
-FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 7 Warning(s).
-Load "..\\OBJ\\Template.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
+..\HARDWARE\usart3\usart3.c(134): error:  #513: a value of type "char *" cannot be assigned to an entity of type "int *"
+                                                        aim_index = aim_routine[Task_index];
+..\HARDWARE\usart3\usart3.c: 0 warnings, 1 error
+"..\OBJ\Template.axf" - 1 Error(s), 6 Warning(s).
+Target not created
+pe "int *"
+  int *aim_index = aim_routine[TASK_1_index];
+main.c(203): error:  #513: a value of type "char *" cannot be assigned to an entity of type "int *"
+                                                        aim_index = aim_routine[Task_index];
+main.c(226): error:  #513: a value of type "char *" cannot be assigned to an entity of type "int *"
+                                                aim_index = aim_routine[Task_index];
+main.c(362): warning:  #181-D: argument is incompatible with corresponding format string conversion
+                sprintf(str1, "P_X: %d, %d", PWM_X, PWM_init_X[*aim_index]);
+main.c(363): warning:  #181-D: argument is incompatible with corresponding format string conversion
+                sprintf(str2, "P_Y: %d, %d", PWM_Y, PWM_init_Y[*aim_index]);
+main.c(370): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 80 , 240, 16, 16, str1);
+main.c(371): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 110 , 240, 16, 16, str2);
+main.c(375): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 140 , 240, 16, 16, str3);
+main.c(376): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+                LCD_ShowString(150, 170 , 240, 16, 16, str4);
+main.c(301): warning:  #177-D: variable "I_count" was declared but never referenced
+        static u8 I_count = 0;
+main.c(306): warning:  #177-D: variable "str5" was declared but never referenced
+        char str5[30] = {0};
+main.c: 13 warnings, 3 errors
+compiling usart3.c...
+..\HARDWARE\usart3\usart3.c(134): error:  #513: a value of type "char *" cannot be assigned to an entity of type "int *"
+                                                        aim_index = aim_routine[Task_index];
+..\HARDWARE\usart3\usart3.c: 0 warnings, 1 error
+"..\OBJ\Template.axf" - 4 Error(s), 13 Warning(s).
+Target not created

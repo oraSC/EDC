@@ -3,7 +3,7 @@
 #include "pid.h"
 #include "string.h"
 #include "motor.h"
-
+#include "init.h"
 /*
 *说明：使用usart3 usart_RX -> PB11、usart_TX -> PB10
 */
@@ -60,7 +60,7 @@ extern int PWM_X, PWM_Y;
 extern pid_t pid_X;
 extern pid_t pid_Y;
 
-extern int aim_routine[5][9];
+extern int aim_routine[TASK_num][TASK_node_num];
 extern int Task_index;
 extern int *aim_index;
 
@@ -90,8 +90,10 @@ void USART3_IRQHandler(void)
 		
 		if(Res == 'm')
 		{
-			displayMode = -displayMode;
 			
+			displayMode = -displayMode;
+			pid_X.E_sum = 0;
+			pid_Y.E_sum = 0;
 			
 			//printf("m\n");
 		}
@@ -127,6 +129,7 @@ void USART3_IRQHandler(void)
 							//转向另一个任务
 							on_task = 0;
 							task_time = 0;
+							
 							Task_index =  USART3_RX_BUF[1] - '0';
 							aim_index = aim_routine[Task_index];
 						

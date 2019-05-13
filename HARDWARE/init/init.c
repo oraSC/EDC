@@ -100,8 +100,8 @@ void sys_init(void)
 	Aim[buffer_2_index].PID_d_x = 10;
 	Aim[buffer_2_index].PID_d_y = 10;
 	
-	Aim[buffer_3_index].X = 47;
-	Aim[buffer_3_index].Y = 128;
+	Aim[buffer_3_index].X = 55;
+	Aim[buffer_3_index].Y = 130;
 	Aim[buffer_3_index].success_distance = 20;
 	Aim[buffer_3_index].middle_distance = 30;
 	Aim[buffer_3_index].PID_p_x = 0.001;
@@ -133,15 +133,15 @@ void sys_init(void)
 	PWM_init_Y[AIM_6_index] = 54;
 	PWM_init_X[AIM_8_index] = 70;
 	PWM_init_Y[AIM_8_index] = 70;
-	PWM_init_X[AIM_9_index] = 40;
-	PWM_init_Y[AIM_9_index] = 40;
+	PWM_init_X[AIM_9_index] = 42;
+	PWM_init_Y[AIM_9_index] = 42;
 	PWM_init_X[buffer_1_index] = 50;
 	PWM_init_Y[buffer_1_index] = 50;
 	PWM_init_X[buffer_2_index] = 45;
 	PWM_init_Y[buffer_2_index] = 70;
-	PWM_init_X[buffer_3_index] = 70;
-	PWM_init_Y[buffer_3_index] = 70;
-	PWM_init_X[buffer_4_index] = 50;
+	PWM_init_X[buffer_3_index] = 60;
+	PWM_init_Y[buffer_3_index] = 55;
+	PWM_init_X[buffer_4_index] = 45;
 	PWM_init_Y[buffer_4_index] = 50;
 
 			//外设初始化

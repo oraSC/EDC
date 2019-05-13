@@ -40,3 +40,4 @@
 ..\obj\usart3.o: ..\HARDWARE\PID\pid.h
 ..\obj\usart3.o: D:\win10\app\keil5\set_up_path\ARM\ARMCC\bin\..\include\string.h
 ..\obj\usart3.o: ..\HARDWARE\motor\motor.h
+..\obj\usart3.o: ..\HARDWARE\init\init.h
