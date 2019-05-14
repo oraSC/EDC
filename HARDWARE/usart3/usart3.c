@@ -135,7 +135,7 @@ void USART3_IRQHandler(void)
 							Task_index =  USART3_RX_BUF[1] - '0';
 							aim_index = aim_routine[Task_index];
 							//针对任务六，清空任务六链表
-							if(*aim_index == TASK_6_index)
+							if(Task_index == TASK_6_index)
 							{
 								task_6_num = 0;
 							}
@@ -144,8 +144,30 @@ void USART3_IRQHandler(void)
 						{
 							
 							aim_routine[TASK_6_index][task_6_num] = USART3_RX_BUF[1] - '0';
-							task_6_num += 2;
-							
+							if(task_6_num != 0)
+							{
+							switch(USART3_RX_BUF[1] - '0')
+							{
+								case 1:
+								case 2:
+								case 4:
+								aim_routine[TASK_6_index][task_6_num - 2] = buffer_1_index;
+								break;
+								case 3:
+								case 6:
+								aim_routine[TASK_6_index][task_6_num - 2] = buffer_2_index;
+								break;
+								case 7:
+								case 8:
+								aim_routine[TASK_6_index][task_6_num - 2] = buffer_3_index;
+								break;
+								case 9:
+								aim_routine[TASK_6_index][task_6_num - 2] = buffer_4_index;
+								break;
+								
+							}
+							}
+							task_6_num += 4;
 						
 						}
 						

@@ -36,17 +36,16 @@ int PWM_init_Y[20];
 	
 int success = 0;
 int aim_routine[TASK_num][TASK_node_num] = {	{0},
-							{buffer_3_index, 1,AIM_7_index, 2.5*2, A_Task_Finish},						//任务一
+							{AIM_2_index, 5.5*2, A_Task_Finish},						//任务一
 							{AIM_5_index, 2.5*2, A_Task_Finish},						//任务二
 							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
 							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,  A_Task_Finish},						//任务四
-							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, -1, AIM_9_index, 2.5 * 2, A_Task_Finish},			
-							{0, -1, 0, -1, 0, -1, 0, 2.5*2, A_Task_Finish},
+							{AIM_2_index, -1, AIM_6_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2, A_Task_Finish},			
+							{0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, 2.5*2, A_Task_Finish},
 							{buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,A_Task_Finish}
-							
 							};     //对应编号 - 1
 int Task_index = TASK_1_index;
 int *aim_index = aim_routine[TASK_1_index];
@@ -269,16 +268,16 @@ int main(void)
 				{
 					pid_X.Kp = 2;
 					pid_Y.Kp = 2;
-					pid_X.Kd = 30;
-					pid_Y.Kd = 30;
+					pid_X.Kd = 50;
+					pid_Y.Kd = 50;
 				
 				}
 				else if(*aim_index == 9)
 				{
 					pid_X.Kp = 1.7;
 					pid_Y.Kp = 1.7;
-					pid_X.Kd = 70;
-					pid_Y.Kd = 70;
+					pid_X.Kd = 50;
+					pid_Y.Kd = 50;
 				
 				
 				}
@@ -305,8 +304,8 @@ int main(void)
 				{
 					pid_X.Kp = 1;
 					pid_Y.Kp = 1;
-					pid_X.Kd = 70;
-					pid_Y.Kd = 70;
+					pid_X.Kd = 40;
+					pid_Y.Kd = 40;
 				
 				
 				}
@@ -314,8 +313,8 @@ int main(void)
 				{
 					pid_X.Kp = 1.7;
 					pid_Y.Kp = 1.7;
-					pid_X.Kd = 28;
-					pid_Y.Kd = 28;
+					pid_X.Kd = 35;
+					pid_Y.Kd = 35;
 				
 				
 				}
@@ -323,8 +322,8 @@ int main(void)
 				{
 					pid_X.Kp = 1.7;
 					pid_Y.Kp = 1.7;
-					pid_X.Kd = 30;
-					pid_Y.Kd = 30;
+					pid_X.Kd = 50;
+					pid_Y.Kd = 50;
 				}
 				success = 0;
 //				pid_X.E_sum = 0;

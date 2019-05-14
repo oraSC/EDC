@@ -105,8 +105,8 @@ void sys_init(void)
 	Aim[buffer_1_index].Y = 61;
 	Aim[buffer_1_index].success_distance = 20;
 	Aim[buffer_1_index].middle_distance = 30;
-	Aim[buffer_1_index].PID_p_x = 0.003;
-	Aim[buffer_1_index].PID_p_y = 0.003;
+	Aim[buffer_1_index].PID_p_x = 1.7;
+	Aim[buffer_1_index].PID_p_y = 1.7;
 	Aim[buffer_1_index].PID_d_x = 50;
 	Aim[buffer_1_index].PID_d_y = 50;
 	
@@ -114,8 +114,8 @@ void sys_init(void)
 	Aim[buffer_2_index].Y = 59;
 	Aim[buffer_2_index].success_distance = 20;
 	Aim[buffer_2_index].middle_distance = 30;
-	Aim[buffer_2_index].PID_p_x = 0.003;
-	Aim[buffer_2_index].PID_p_y = 0.003;
+	Aim[buffer_2_index].PID_p_x = 1.7;
+	Aim[buffer_2_index].PID_p_y = 1.7;
 	Aim[buffer_2_index].PID_d_x = 50;
 	Aim[buffer_2_index].PID_d_y = 50;
 	
@@ -123,19 +123,19 @@ void sys_init(void)
 	Aim[buffer_3_index].Y = 130;
 	Aim[buffer_3_index].success_distance = 20;
 	Aim[buffer_3_index].middle_distance = 30;
-	Aim[buffer_3_index].PID_p_x = 0.01;
-	Aim[buffer_3_index].PID_p_y = 0.01;
+	Aim[buffer_3_index].PID_p_x = 1.7;
+	Aim[buffer_3_index].PID_p_y = 1.7;
 	Aim[buffer_3_index].PID_d_x = 50;
 	Aim[buffer_3_index].PID_d_y = 50;
 	
-	Aim[buffer_4_index].X = 86;
-	Aim[buffer_4_index].Y = 118;
-	Aim[buffer_4_index].success_distance = 20;
-	Aim[buffer_4_index].middle_distance = 30;
-	Aim[buffer_4_index].PID_p_x = 0.001;
-	Aim[buffer_4_index].PID_p_y = 0.001;
-	Aim[buffer_4_index].PID_d_x = 10;
-	Aim[buffer_4_index].PID_d_y = 10;
+	Aim[buffer_4_index].X = 96;
+	Aim[buffer_4_index].Y = 135;
+	Aim[buffer_4_index].success_distance = 15;
+	Aim[buffer_4_index].middle_distance = 20;
+	Aim[buffer_4_index].PID_p_x = 1.7;
+	Aim[buffer_4_index].PID_p_y = 1.7;
+	Aim[buffer_4_index].PID_d_x = 60;
+	Aim[buffer_4_index].PID_d_y = 60;
 	
 
 	//≥ı º÷µ
@@ -143,8 +143,8 @@ void sys_init(void)
 	PWM_init_Y[AIM_1_index] = 65;
 	PWM_init_X[AIM_2_index] = 50;
 	PWM_init_Y[AIM_2_index] = 72;
-	PWM_init_X[AIM_3_index] = 35;
-	PWM_init_Y[AIM_3_index] = 70;
+	PWM_init_X[AIM_3_index] = 30;
+	PWM_init_Y[AIM_3_index] = 75;
 	PWM_init_X[AIM_4_index] = 68;
 	PWM_init_Y[AIM_4_index] = 53;
 	PWM_init_X[AIM_5_index] = 51;
@@ -156,8 +156,8 @@ void sys_init(void)
 	PWM_init_Y[AIM_7_index] = 35;
 	PWM_init_X[AIM_8_index] = 55;
 	PWM_init_Y[AIM_8_index] = 37;
-	PWM_init_X[AIM_9_index] = 40;
-	PWM_init_Y[AIM_9_index] = 42;
+	PWM_init_X[AIM_9_index] = 37;
+	PWM_init_Y[AIM_9_index] = 37;
 	PWM_init_X[buffer_1_index] = 50;
 	PWM_init_Y[buffer_1_index] = 50;
 	PWM_init_X[buffer_2_index] = 45;
