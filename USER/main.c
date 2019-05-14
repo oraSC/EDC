@@ -36,7 +36,7 @@ int PWM_init_Y[20];
 	
 int success = 0;
 int aim_routine[TASK_num][TASK_node_num] = {	{0},
-							{buffer_3_index, 1, AIM_7_index, 2.5*2, A_Task_Finish},						//任务一
+							{buffer_3_index, 1,AIM_7_index, 2.5*2, A_Task_Finish},						//任务一
 							{AIM_5_index, 2.5*2, A_Task_Finish},						//任务二
 							{AIM_4_index, 5, AIM_5_index, 5, A_Task_Finish},			//任务三
 							{buffer_1_index, -1, buffer_2_index, -1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,  A_Task_Finish},						//任务四
@@ -88,7 +88,7 @@ int main(void)
 	motor_init(50);			//50HZ -> 20ms
 //	TIM_SetCompare1(TIM4, 1100);	//修改比较值，修改占空比      输出pid计算值
 //	TIM_SetCompare2(TIM4, 1100);	//修改比较值，修改占空比
-	set_angle(PWM_init_X[*aim_index], PWM_init_Y[*aim_index]);
+	set_angle(PWM_init_X[AIM_2_index], PWM_init_Y[AIM_2_index]);
 	
 	/********************************pid*********************************************/
 	pid_init(&pid_X, 3, 0.005, 10); //pid_init(pid_t *Pid, float Kp, float Ki, float Kd)
@@ -282,15 +282,16 @@ int main(void)
 				
 				
 				}
-				else if(*aim_index == 7)
-				{
-					pid_X.Kp = 0.5;
-					pid_Y.Kp = 0.5;
-					pid_X.Kd = 15;
-					pid_Y.Kd = 15;
-				
-				
-				}
+//				else if(*aim_index == 7)
+//				{
+//					pid_X.Kp = 1;
+//					pid_Y.Kp = 1;
+//					pid_X.Kd = 30;
+//					pid_Y.Kd = 30;
+//				
+//				
+//				}
+
 //				else if(*aim_index == 8)
 //				{
 //					pid_X.Kp = 1.7;
@@ -300,6 +301,24 @@ int main(void)
 //				
 //				
 //				}
+				else if(*aim_index == 3)
+				{
+					pid_X.Kp = 1;
+					pid_Y.Kp = 1;
+					pid_X.Kd = 70;
+					pid_Y.Kd = 70;
+				
+				
+				}
+				else if(*aim_index == 6)
+				{
+					pid_X.Kp = 1.7;
+					pid_Y.Kp = 1.7;
+					pid_X.Kd = 28;
+					pid_Y.Kd = 28;
+				
+				
+				}
 				else
 				{
 					pid_X.Kp = 1.7;
