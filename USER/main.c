@@ -45,7 +45,8 @@ int aim_routine[TASK_num][TASK_node_num] = {	{0},
 							{buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
 							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, buffer_3_index, 1,\
-							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,A_Task_Finish}
+							buffer_1_index, 1, buffer_2_index, 1, buffer_4_index, 1, AIM_9_index, 2.5 * 2,A_Task_Finish},
+							{AIM_5_index}
 							};     //对应编号 - 1
 int Task_index = TASK_1_index;
 int *aim_index = aim_routine[TASK_1_index];
@@ -103,7 +104,10 @@ int main(void)
 		{
 			on_task = 1;
 		}	
-		
+		if(Task_index == TASK_8_index)
+		{
+			two_exchange();
+		}
 		//等待新的一帧
 		while(ov_frame_flag == OLD_frame);
 		ov_frame_flag = OLD_frame;
@@ -228,6 +232,7 @@ int main(void)
 						Task_index++;
 						aim_index = aim_routine[Task_index];
 						displayMode = RGB;
+						
 					}
 
 					pid_X.E_sum = 0;
@@ -313,8 +318,8 @@ int main(void)
 				{
 					pid_X.Kp = 1.7;
 					pid_Y.Kp = 1.7;
-					pid_X.Kd = 35;
-					pid_Y.Kd = 35;
+					pid_X.Kd = 40;
+					pid_Y.Kd = 40;
 				
 				
 				}
@@ -496,5 +501,174 @@ void TIM3_IRQHandler(void)
 
 
 }
+
+void two_exchange(void)
+{
+	
+	u16 i,j;
+	
+	while(1)
+	{
+		if(displayMode == BinaryZation)
+		{
+			on_task = 1;
+		}	
+		if(Task_index != TASK_8_index)
+		{
+			return;
+		}
+		//等待新的一帧
+		while(ov_frame_flag == OLD_frame);
+		ov_frame_flag = OLD_frame;
+		LCD_SetCursor(0,0);  
+		LCD_WriteRAM_Prepare();		//开始写入GRAM
+		for(i=0;i<WINDOW_HEIGHT;i++)
+		{
+			 
+			for(j=0; j < WINDOW_WIDTH; j++)
+			{
+				if(j == WINDOW_WIDTH - 1)
+				{
+					LCD_SetCursor(0,i+1);  
+					LCD_WriteRAM_Prepare();		//开始写入GRAM
+				}
+				
+				
+				/*************************************************二值化*******************************************/
+				
+					
+				gray=((rgb_buf[i][j]>>11)*19595+((rgb_buf[i][j]>>5)&0x3f)*38469 +(rgb_buf[i][j]&0x1f)*7472)>>16;  //灰度计算。公式请百度
+				if(gray>=22)  //固定阈值二值化
+				{			  
+						//if(i>8&&i<136&&j<200&&j>16)  //此处遍历图像寻找小球最上最下 最左 最右四个点坐标
+						{
+							if(j > pid_X.ball_max_X)	pid_X.ball_max_X = j;
+							if(j < pid_X.ball_min_X) 	pid_X.ball_min_X = j;
+						 
+							if(i > pid_Y.ball_max_Y)	pid_Y.ball_max_Y = i;
+							if(i < pid_Y.ball_min_Y) 	pid_Y.ball_min_Y = i;
+					 
+						}
+						
+						if(displayMode == BinaryZation)
+						{
+							LCD->LCD_RAM=WHITE;
+							have_ball = 1;
+						}
+				}
+				else
+				{		
+					if(displayMode == BinaryZation)
+					{
+						LCD->LCD_RAM=BLACK;
+						
+					}
+					
+				}
+			
+				/***********************************************RGB****************************************************/
+				if(displayMode == RGB)
+				{
+					LCD->LCD_RAM=rgb_buf[i][j];
+					pid_X.E_sum = 0;
+					pid_Y.E_sum = 0;
+					
+				}
+			}
+			
+		}
+//		if(pid_Y.ball_max_Y - pid_Y.ball_min_Y >=  50 && pid_Y.ball_min_Y != 200)
+//		{
+//			set_angle(100, 100);
+//			
+////			continue;
+//		}
+			
+		
+		
+//		pid_X.ball_center_X = (pid_X.ball_max_X + pid_X.ball_min_X) / 2;
+//		pid_Y.ball_center_Y = (pid_Y.ball_max_Y + pid_Y.ball_min_Y) / 2;     //通过四个点坐标计算小球质心
+//			
+		pid_X.ball_center_X = pid_X.ball_max_X - 2;
+		pid_Y.ball_center_Y = pid_Y.ball_max_Y - 2;
+		
+		if(displayMode == BinaryZation)
+		{
+		//成功
+		if(abs(pid_X.ball_center_X - Aim[5].X) <= Aim[5].success_distance \
+			&& abs(pid_Y.ball_center_Y - Aim[5].Y) <= Aim[5].success_distance)
+		{
+			success++;
+			if(success >= 7)
+			{
+				if(*aim_index < 10)
+				{
+					pid_X.Kp = 0;
+					pid_Y.Kp = 0;
+					pid_X.Kd = 0;
+					pid_Y.Kd = 0;
+				}
+			}
+			if(success >= 10)
+			{
+				//目标点
+				pid_X.E_sum = 0;
+				pid_Y.E_sum = 0;
+				success = 0;	
+				
+			}
+			
+		}
+
+		//靠近
+		else if(abs(pid_X.ball_center_X - Aim[5].X) <= Aim[5].middle_distance \
+			&& abs(pid_Y.ball_center_Y - Aim[5].Y) <= Aim[5].middle_distance)
+		{
+
+			pid_X.Kp = Aim[5].PID_p_x;
+			pid_Y.Kp = Aim[5].PID_p_y;
+			pid_X.Kd = Aim[5].PID_d_x;
+			pid_Y.Kd = Aim[5].PID_d_y;
+
+			//重置
+			success = 0;		
+			success_enable_timing = 0;
+			success_timeout = 0;
+			success_timing = 0;
+
+		}
+		//远离
+		else 
+		{
+
+
+			pid_X.Kp = 2;
+			pid_Y.Kp = 2;
+			pid_X.Kd = 40;
+			pid_Y.Kd = 40;
+
+			success = 0;
+
+
+		}
+		
+		}
+			pid_X.ball_max_X = 0;
+			pid_X.ball_min_X = 160;
+			pid_Y.ball_max_Y = 0;
+			pid_Y.ball_min_Y = 200;   //清除掉本次坐标用于再次遍历最大值 最小值
+				
+			//pid计算
+			pid_calculate();
+			ov_frame++;
+
+	}
+
+
+
+}
+
+
+
 
 

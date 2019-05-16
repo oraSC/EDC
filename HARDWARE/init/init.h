@@ -32,6 +32,7 @@ typedef struct {
 #define TASK_5_index	5
 #define TASK_6_index	6
 #define TASK_7_index	7
+#define TASK_8_index	8
 
 
 #define A_Task_Finish	0
@@ -53,6 +54,6 @@ typedef struct {
 #define WINDOW_HEIGHT	196
 
 void sys_init(void);
-void task_6_get_node(void);
+void two_exchange(void);
 
 #endif

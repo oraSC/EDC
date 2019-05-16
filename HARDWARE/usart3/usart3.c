@@ -139,6 +139,7 @@ void USART3_IRQHandler(void)
 							{
 								task_6_num = 0;
 							}
+							
 						}
 						else if(USART3_RX_BUF[0] == 'n')
 						{
