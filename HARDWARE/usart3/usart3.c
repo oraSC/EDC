@@ -156,6 +156,7 @@ void USART3_IRQHandler(void)
 								break;
 								case 3:
 								case 6:
+								case 5:	
 								aim_routine[TASK_6_index][task_6_num - 2] = buffer_2_index;
 								break;
 								case 7:
